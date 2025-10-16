@@ -1,3 +1,21 @@
+# Calculator
+parses math input into a binary tree, operations are chained together. Has built in functions and constants
+use MathParserBuilder to add custom functions and constatns
+
+usage example:
+
+```java
+import com.mixfa.calculator.MathParser;
+import com.mixfa.calculator.exception.MathParsingException;
+
+void main() throws MathParsingException {
+    var parser = MathParser.defaultParser;
+    IO.println(parser.parse("sin(1)^2").calculate());
+}
+```
+
+more complicated example
+```java
 import com.mixfa.calculator.FunctionComponent;
 import com.mixfa.calculator.MathComponent;
 import com.mixfa.calculator.MathConstant;
@@ -14,3 +32,4 @@ void main() throws MathParsingException {
 
     IO.println(parser.parse("rand()+negate(x)").calculate());
 }
+```
