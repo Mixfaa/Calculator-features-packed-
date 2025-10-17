@@ -56,13 +56,15 @@ public class MathParser {
                     throw new MathParsingException(re.getMessage());
                 }
 
-                if (functionComponent.argsCount() != args.length)
+                if (functionComponent.argsCount() != args.length && functionComponent.argsCount() == -1)
                     throw new MathParsingException("Args count mismatch " + functionComponent + " comp: " + comp);
 
                 switch (functionComponent) {
                     case FunctionComponent.FunctionComponent0 fc0 -> node.comp(fc0.function().get());
                     case FunctionComponent.FunctionComponent1 fc1 -> node.comp(fc1.function().apply(args[0]));
                     case FunctionComponent.FunctionComponent2 fc2 -> node.comp(fc2.function().apply(args[0], args[1]));
+                    case FunctionComponent.FunctionComponent3 fc3 -> node.comp(fc3.function().apply(args[0], args[1], args[2]));
+                    case FunctionComponent.FunctionComponentMulti fcMulti -> node.comp(fcMulti.function().apply(args));
                 }
 
                 return node.comp();
