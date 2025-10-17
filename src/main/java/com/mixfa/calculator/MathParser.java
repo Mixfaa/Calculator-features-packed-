@@ -37,7 +37,7 @@ public class MathParser {
             }
 
         for (FunctionComponent functionComponent : functionComponents)
-            if (comp.startsWith(functionComponent.prefix())) {
+            if (Utils.startsWithFunctionName(comp, functionComponent)) {
                 MathComponent[] args;
                 try {
                     args = Arrays.stream(getArgs(comp).split(","))
@@ -99,7 +99,7 @@ public class MathParser {
             } else {
                 str.append(c);
 
-                if (startsWithFunction(str)) {
+                if (isFunctionName(str)) {
                     var endOfFunction = findClosingBracketPos(input, i + 1);
                     str.append(input, i + 1, endOfFunction + 1);
                     i = endOfFunction;
@@ -113,7 +113,7 @@ public class MathParser {
         return tree.parse();
     }
 
-    private boolean startsWithFunction(StringBuilder str) {
+    private boolean isFunctionName(StringBuilder str) {
         for (FunctionComponent functionComponent : functionComponents)
             if (Utils.equals(functionComponent.prefix(), str)) return true;
         return false;

@@ -6,6 +6,16 @@ public class Utils {
     private Utils() {
     }
 
+    public static boolean startsWithFunctionName(String comp, FunctionComponent functionComponent) {
+        var prefix = functionComponent.prefix();
+        var prefixLength = prefix.length();
+
+        if (comp.length() < prefixLength) return false;
+        if (comp.charAt(prefixLength) != '(') return false;
+
+        return comp.startsWith(prefix);
+    }
+
     public static int findClosingBracketPos(String str, int startPos) throws MathParsingException {
         var openingBrackets = 0;
         var bytes = str.getBytes();
