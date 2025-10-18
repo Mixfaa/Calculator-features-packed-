@@ -13,7 +13,7 @@ public sealed interface FunctionComponent {
 
     record FunctionComponent0(
             String prefix,
-            Supplier<MathComponent> function
+            Supplier<MathComponent.Value> function
     ) implements FunctionComponent {
         @Override
         public int argsCount() {
@@ -23,7 +23,7 @@ public sealed interface FunctionComponent {
 
     record FunctionComponent1(
             String prefix,
-            Function<MathComponent, MathComponent> function
+            Function<MathComponent.Value, MathComponent.Value> function
     ) implements FunctionComponent {
         @Override
         public int argsCount() {
@@ -33,7 +33,7 @@ public sealed interface FunctionComponent {
 
     record FunctionComponent2(
             String prefix,
-            BiFunction<MathComponent, MathComponent, MathComponent> function
+            BiFunction<MathComponent.Value, MathComponent.Value, MathComponent.Value> function
     ) implements FunctionComponent {
         @Override
         public int argsCount() {
@@ -43,7 +43,7 @@ public sealed interface FunctionComponent {
 
     record FunctionComponent3(
             String prefix,
-            TriFunction<MathComponent, MathComponent, MathComponent, MathComponent> function
+            TriFunction<MathComponent.Value, MathComponent.Value, MathComponent.Value, MathComponent.Value> function
     ) implements FunctionComponent {
         @Override
         public int argsCount() {
@@ -53,7 +53,7 @@ public sealed interface FunctionComponent {
 
     record FunctionComponentMulti(
             String prefix,
-            Function<MathComponent[], MathComponent> function
+            Function<MathComponent.Value[], MathComponent.Value> function
     ) implements FunctionComponent {
         @Override
         public int argsCount() {

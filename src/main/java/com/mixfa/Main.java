@@ -1,16 +1,18 @@
-import com.mixfa.calculator.FunctionComponent;
-import com.mixfa.calculator.MathComponent;
-import com.mixfa.calculator.MathConstant;
-import com.mixfa.calculator.MathParserBuilder;
+import com.mixfa.calculator.*;
 import com.mixfa.calculator.exception.MathParsingException;
+
+import static com.mixfa.calculator.MathUtils.toValue;
 
 void main() throws MathParsingException {
     var parser = new MathParserBuilder()
             .addDefaults()
-            .addConstant(new MathConstant("x", new MathComponent.Value(BigDecimal.valueOf(25.0))))
-            .addFunction(new FunctionComponent.FunctionComponent0("rand", () -> new MathComponent.Value(BigDecimal.valueOf(Math.random()))))
-            .addFunction(new FunctionComponent.FunctionComponent1("negate", (arg) -> new MathComponent.Value(arg.calculate().negate())))
+            .addConstant(new MathConstant("x", toValue(BigInteger.valueOf(25))))
+            .addFunction(new FunctionComponent.FunctionComponent0("rand", () -> MathUtils.toValue(BigDecimal.valueOf(Math.random()))))
+            .addFunction(new FunctionComponent.FunctionComponent1("negate", (arg) -> arg.calculate().negate()))
             .build();
 
-    IO.println(parser.parse("rand()+negate(x)").calculate());
+//    IO.println(parser.parse("rand()+negate(x)").calculate());
+//    IO.println(parser.parse("2/2").calculate());
+//    IO.println(parser.parse("lcm(25,15)").calculate());
+    IO.println(parser.parse("1-(-1)").calculate());
 }

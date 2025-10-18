@@ -15,6 +15,7 @@ void main() throws MathParsingException {
 ```
 
 more complicated example
+
 ```java
 import com.mixfa.calculator.FunctionComponent;
 import com.mixfa.calculator.MathComponent;

@@ -1,6 +1,11 @@
 package com.mixfa.calculator;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
+import com.mixfa.calculator.functions.GreatestCommonDivisorFunction;
+import com.mixfa.calculator.functions.LowestCommonMultipleFunction;
+
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,16 +13,18 @@ public class MathParserBuilder {
     private final List<FunctionComponent> functions = new ArrayList<>();
     private final List<MathConstant> constants = new ArrayList<>();
     protected static final List<FunctionComponent> DEFAULT_FUNCTIONS = List.of(
-            new FunctionComponent.FunctionComponent1("sin", val -> new MathComponent.MathFunc1(val, Math::sin)),
-            new FunctionComponent.FunctionComponent1("cos", val -> new MathComponent.MathFunc1(val, Math::cos)),
-            new FunctionComponent.FunctionComponent1("tan", val -> new MathComponent.MathFunc1(val, Math::tan)),
-            new FunctionComponent.FunctionComponent1("sqrt", val -> new MathComponent.MathFunc1(val, Math::sqrt)),
-            new FunctionComponent.FunctionComponent2("pow", (arg1, arg2) -> new MathComponent.MathFunc2(arg1, arg2, Math::pow))
+            new FunctionComponent.FunctionComponent1("sin", val -> MathUtils.toValue(BigDecimalMath.sin(val.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent1("cos", val -> MathUtils.toValue(BigDecimalMath.cos(val.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent1("tan", val -> MathUtils.toValue(BigDecimalMath.tan(val.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent1("sqrt", val -> MathUtils.toValue(BigDecimalMath.sqrt(val.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent2("pow", (arg1, arg2) -> MathUtils.toValue(BigDecimalMath.pow(arg1.asBigDecimal(), arg2.asBigDecimal(), MathContext.DECIMAL128))),
+            GreatestCommonDivisorFunction.greatestCommonDivisor(),
+            LowestCommonMultipleFunction.lowestCommonMultiple()
     );
 
     protected static final List<MathConstant> DEFAULT_CONSTANTS = List.of(
-            new MathConstant("e", BigDecimal.valueOf(Math.E)),
-            new MathConstant("pi", BigDecimal.valueOf(Math.PI))
+            new MathConstant("e", new MathComponent.Value.BigDecimalValue(new BigDecimal(String.valueOf(Math.E)))),
+            new MathConstant("pi", new MathComponent.Value.BigDecimalValue(new BigDecimal(String.valueOf(Math.PI))))
     );
 
     public MathParserBuilder addDefaults() {
