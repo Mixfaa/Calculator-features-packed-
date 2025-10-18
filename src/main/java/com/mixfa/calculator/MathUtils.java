@@ -5,6 +5,7 @@ import ch.obermuhlner.math.big.BigDecimalMath;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.Optional;
 
 import static com.mixfa.calculator.MathComponent.Value;
 import static com.mixfa.calculator.MathComponent.Value.*;
@@ -47,6 +48,11 @@ public class MathUtils {
         if (a.isZero()) return BigIntValue.zero();
         if (b.isZero()) throw new ArithmeticException("Division by zero");
 
+        if (b.equalsConstant(OptimizationConstant.ONE))
+            return a;
+        if (b.equalsConstant(OptimizationConstant.MINUS_ONE))
+            return a.negate();
+
         if (a.equals(b))
             return BigIntValue.one();
 
@@ -65,6 +71,16 @@ public class MathUtils {
     public static Value multiply(Value a, Value b) {
         if (a.isZero() || b.isZero()) return BigIntValue.zero();
 
+        if (a.equalsConstant(OptimizationConstant.ONE))
+            return b;
+        if (b.equalsConstant(OptimizationConstant.ONE))
+            return a;
+
+        if (a.equalsConstant(OptimizationConstant.MINUS_ONE))
+            return b.negate();
+        if (b.equalsConstant(OptimizationConstant.MINUS_ONE))
+            return a.negate();
+
         if (a instanceof BigIntValue && b instanceof BigIntValue)
             return toValue(a.asBigInteger().multiply(b.asBigInteger()));
 
@@ -74,6 +90,9 @@ public class MathUtils {
     public static Value power(Value a, Value b) {
         if (a.isZero()) return BigIntValue.zero();
         if (b.isZero()) return BigIntValue.one();
+
+        if (b.equalsConstant(OptimizationConstant.ONE))
+            return a;
 
         if (a instanceof BigIntValue && b instanceof BigIntValue)
             return toValue(a.asBigInteger().pow(b.asBigInteger().intValue()));
