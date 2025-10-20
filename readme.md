@@ -9,7 +9,7 @@ import com.mixfa.calculator.MathParser;
 import com.mixfa.calculator.exception.MathParsingException;
 
 void main() throws MathParsingException {
-    var parser = MathParser.defaultParser;
+    var parser = MathParser.defaultParser();
     IO.println(parser.parse("sin(1)^2").calculate());
 }
 ```

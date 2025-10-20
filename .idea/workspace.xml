@@ -28,13 +28,14 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Main (1).executor": "Run",
+    "Application.Main (1).executor": "Debug",
     "Application.Main.executor": "Run",
     "JUnit.CalculatorTest.executor": "Run",
     "JUnit.CalculatorTest.test1.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "ignore.preview.features.used": "true",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "project.structure.last.edited": "Modules",
@@ -43,7 +44,7 @@
     "settings.editor.selected.configurable": "configurable.group.appearance"
   }
 }]]></component>
-  <component name="RunManager" selected="JUnit.CalculatorTest.test1">
+  <component name="RunManager" selected="Application.Main (1)">
     <configuration name="Main (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="UNNAMED_CLASS_CONFIGURATION" value="true" />
       <option name="MAIN_CLASS_NAME" value="Main" />
@@ -80,9 +81,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.CalculatorTest.test1" />
         <item itemvalue="Application.Main (1)" />
         <item itemvalue="JUnit.CalculatorTest" />
+        <item itemvalue="JUnit.CalculatorTest.test1" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -103,5 +104,31 @@
       <updated>1758271472966</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/mixfa/calculator/functions/LowestCommonMultipleFunction.java</url>
+          <line>33</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/mixfa/calculator/functions/LowestCommonMultipleFunction.java</url>
+          <line>44</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/mixfa/calculator/MathUtils.java</url>
+          <line>80</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/mixfa/calculator/MathUtils.java</url>
+          <line>130</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -3,6 +3,7 @@ package com.mixfa.calculator.functions;
 import com.mixfa.calculator.FunctionComponent;
 import com.mixfa.calculator.MathComponent;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.Supplier;
 
@@ -17,15 +18,30 @@ public class LowestCommonMultipleFunction {
         return FUNCTION.get();
     }
 
-    public static BigInteger findLCM(BigInteger a, BigInteger b) {
-        if (a.equals(BigInteger.ZERO) || b.equals(BigInteger.ZERO)) {
-            return BigInteger.ZERO;
+    public static MathComponent.Value findLCM(BigInteger a, BigInteger b) {
+        if (a.compareTo(BigInteger.ZERO) == 0 || b.compareTo(BigInteger.ZERO) == 0) {
+            return MathComponent.Value.BigIntValue.zero();
         }
 
-        return a.multiply(b).abs().divide(GreatestCommonDivisorFunction.findGCDRecursive(a, b));
+        return toValue(a.multiply(b).abs().divide(GreatestCommonDivisorFunction.findGCDRecursive(a, b)));
+    }
+
+    public static MathComponent.Value findLCM(BigDecimal a, BigDecimal b) {
+        if (a.compareTo(BigDecimal.ZERO) == 0 || b.compareTo(BigDecimal.ZERO) == 0) {
+            return MathComponent.Value.BigIntValue.zero();
+        }
+
+        return toValue(a.multiply(b).abs().divide(GreatestCommonDivisorFunction.findGCDRecursive(a, b)));
     }
 
     public static MathComponent.Value lowestCommonMultiple(MathComponent.Value a, MathComponent.Value b) {
-        return toValue(findLCM(a.calculate().asBigInteger(), b.calculate().asBigInteger()));
+        if (a.isZero() || b.isZero()) {
+            return MathComponent.Value.BigIntValue.zero();
+        }
+
+        if (a instanceof MathComponent.Value.BigIntValue && b instanceof MathComponent.Value.BigIntValue)
+            return findLCM(a.asBigInteger(), b.asBigInteger());
+
+        return findLCM(a.asBigDecimal(), b.asBigDecimal());
     }
 }

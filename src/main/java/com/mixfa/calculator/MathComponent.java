@@ -2,7 +2,7 @@ package com.mixfa.calculator;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Optional;
+import java.math.MathContext;
 
 public sealed interface MathComponent {
     MathComponent.Value calculate();
@@ -26,6 +26,10 @@ public sealed interface MathComponent {
 
         Value negate();
 
+        int signum();
+
+        Value abs();
+
         boolean equalsConstant(OptimizationConstant constant);
 
         default boolean isZero() {
@@ -42,6 +46,16 @@ public sealed interface MathComponent {
 
             public static BigIntValue zero() {
                 return ZERO;
+            }
+
+            @Override
+            public int signum() {
+                return value.signum();
+            }
+
+            @Override
+            public Value abs() {
+                return new BigIntValue(value.abs());
             }
 
             @Override
@@ -66,12 +80,21 @@ public sealed interface MathComponent {
 
             @Override
             public boolean equalsConstant(OptimizationConstant constant) {
-                return value.equals(constant.intValue());
+                return value.compareTo(constant.intValue()) == 0;
             }
-
         }
 
         record BigDecimalValue(BigDecimal value) implements Value {
+
+            @Override
+            public int signum() {
+                return value.signum();
+            }
+
+            @Override
+            public Value abs() {
+                return new BigDecimalValue(value.abs());
+            }
 
             @Override
             public Value calculate() {
@@ -95,11 +118,30 @@ public sealed interface MathComponent {
 
             @Override
             public boolean equalsConstant(OptimizationConstant constant) {
-                return value.equals(constant.decimalValue());
+                return value.compareTo(constant.decimalValue()) == 0;
             }
         }
 
-        record RatioValue(Value value, Value divisor) implements Value {
+        // prefers negative numerator
+        record RatioValue(Value numerator, Value denominator) implements Value {
+            public RatioValue {
+                if ((numerator.signum() == -1 && denominator.signum() == -1) ||
+                        numerator.signum() == 1 && denominator.signum() == -1) {
+                    numerator = numerator.negate();
+                    denominator = denominator.negate();
+                }
+            }
+
+            @Override
+            public int signum() {
+                return numerator.signum() * denominator.signum();
+            }
+
+            @Override
+            public Value abs() {
+                return new RatioValue(numerator.signum() == -1 ? numerator.abs() : numerator,
+                        denominator.signum() == -1 ? denominator.abs() : denominator);
+            }
 
             @Override
             public BigInteger asBigInteger() {
@@ -107,17 +149,27 @@ public sealed interface MathComponent {
             }
 
             public BigDecimal asBigDecimal() {
-                return value.asBigDecimal().divide(divisor.asBigDecimal());
+                return numerator.asBigDecimal().divide(denominator.asBigDecimal(), MathContext.DECIMAL128);
             }
 
             @Override
             public Value negate() {
-                return new RatioValue(value, divisor.negate());
+                if (numerator.signum() < 0)
+                    return new RatioValue(numerator.negate(), denominator.negate());
+                else
+                    return new RatioValue(numerator, denominator.negate());
             }
 
             @Override
             public boolean equalsConstant(OptimizationConstant constant) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                return switch (constant) {
+                    case ZERO -> numerator.isZero();
+                    case ONE -> numerator.equals(denominator);
+                    case MINUS_ONE -> numerator.abs().equals(denominator.abs()) && (
+                            (numerator.signum() == -1 && denominator.signum() == 1) || (numerator.signum() == 1 && denominator.signum() == -1)
+                    );
+                };
+
             }
 
             @Override
