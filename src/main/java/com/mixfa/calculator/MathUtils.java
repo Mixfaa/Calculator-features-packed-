@@ -59,38 +59,20 @@ public class MathUtils {
             );
 
             return optimizeRatio(numerator, newDenominator);
-            /*
-            if (r1.denominator().compareTo(r2.denominator()) == 0)
-                return optimizeRatio(MathUtils.add(r1.numerator(), r2.numerator()), r1.denominator());
-
-            IO.println(r1.denominator());
-            IO.println(r2.denominator());
-            var newDenominator = GreatestCommonDivisorFunction.greatestCommonDivisor(r1.denominator(), r2.denominator());
-
-            var mult1 = MathUtils.divide(r1.denominator(), newDenominator);
-            var mult2 = MathUtils.divide(r2.denominator(), newDenominator);
-
-            var numerator = MathUtils.add(
-                    mult1.equalsConstant(OptimizationConstant.ONE) ? r1.numerator() : MathUtils.divide(r1.numerator(), mult1),
-                    mult2.equalsConstant(OptimizationConstant.ONE) ? r2.numerator() : MathUtils.divide(r2.numerator(), mult2)
-            );
-
-            return optimizeRatio(numerator, newDenominator);
-             */
         }
 
         public static Value subtract(RatioValue r1, RatioValue r2) {
             if (r1.denominator().compareTo(r2.denominator()) == 0)
                 return optimizeRatio(MathUtils.subtract(r1.numerator(), r2.numerator()), r1.denominator());
 
-            var newDenominator = GreatestCommonDivisorFunction.greatestCommonDivisor(r1.denominator(), r2.denominator());
+            var newDenominator = LowestCommonMultipleFunction.lowestCommonMultiple(r1.denominator(), r2.denominator());
 
             var mult1 = MathUtils.divide(r1.denominator(), newDenominator);
             var mult2 = MathUtils.divide(r2.denominator(), newDenominator);
 
             var numerator = MathUtils.subtract(
-                    MathUtils.divide(r1.numerator(), mult1),
-                    MathUtils.divide(r2.numerator(), mult2)
+                    mult1.equalsConstant(OptimizationConstant.ONE) ? r1.numerator() : MathUtils.divide(r1.numerator(), mult1),
+                    mult2.equalsConstant(OptimizationConstant.ONE) ? r2.numerator() : MathUtils.divide(r2.numerator(), mult2)
             );
 
             return optimizeRatio(numerator, newDenominator);
@@ -99,11 +81,6 @@ public class MathUtils {
         public static Value multiply(Value n1, Value d1, Value n2, Value d2) {
             var numerator = MathUtils.multiply(n1, n2);
             var denominator = MathUtils.multiply(d1, d2);
-
-            var gcd = GreatestCommonDivisorFunction.greatestCommonDivisor(numerator, denominator);
-
-            numerator = MathUtils.divide(numerator, gcd);
-            denominator = MathUtils.divide(denominator, gcd);
 
             return optimizeRatio(numerator, denominator);
         }
