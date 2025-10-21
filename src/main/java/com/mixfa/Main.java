@@ -19,9 +19,10 @@ void main() throws MathParsingException {
 //    IO.println(parser.parse("lcm(25,15)").calculate());
 //    IO.println(parser.parse("1-(-1)").calculate());
 
-
-    IO.println(parser.parse("(1/3)*(2/6)").calculate());
-    IO.println(parser.parse("(1/3)/(2/6)").calculate());
+    IO.println(parser.parse("gcd(4,6)").calculate());
+    IO.println(parser.parse("(1/3)+2").calculate());
+    IO.println(parser.parse("(1/3)+(2/6)").calculate());
+//    IO.println(parser.parse("(1/3)").calculate());
 //    IO.println(parser.parse("gcd(3,6)").calculate());
 
 

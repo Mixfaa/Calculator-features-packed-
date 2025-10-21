@@ -2,6 +2,7 @@ package com.mixfa.calculator;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.mixfa.calculator.functions.GreatestCommonDivisorFunction;
+import com.mixfa.calculator.functions.LowestCommonMultipleFunction;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,8 +19,17 @@ public class MathUtils {
         public static Value optimizeRatio(Value newNumerator, Value newDenominator) {
             if (newNumerator.isZero())
                 return BigIntValue.zero();
-            if (newNumerator.equals(newDenominator))
+            if (newNumerator.compareTo(newDenominator) == 0)
                 return BigIntValue.one();
+            if (newDenominator.equalsConstant(OptimizationConstant.ONE))
+                return newNumerator;
+
+            var divisor = GreatestCommonDivisorFunction.greatestCommonDivisor(newNumerator, newDenominator);
+            if (!divisor.equalsConstant(OptimizationConstant.ONE))
+                return new RatioValue(
+                        MathUtils.divide(newNumerator, divisor),
+                        MathUtils.divide(newDenominator, divisor)
+                );
 
             return new RatioValue(
                     newNumerator,
@@ -27,25 +37,50 @@ public class MathUtils {
             );
         }
 
+        public static RatioValue valueAsRatio(Value value) {
+            if (value instanceof RatioValue)
+                return (RatioValue) value;
+
+            return new RatioValue(value, BigIntValue.one());
+        }
+
         public static Value add(RatioValue r1, RatioValue r2) {
-            if (r1.denominator().equals(r2.denominator()))
+            if (r1.denominator().compareTo(r2.denominator()) == 0)
                 return optimizeRatio(MathUtils.add(r1.numerator(), r2.numerator()), r1.denominator());
 
+            var newDenominator = LowestCommonMultipleFunction.lowestCommonMultiple(r1.denominator(), r2.denominator());
+
+            var mult1 = MathUtils.divide(r1.denominator(), newDenominator);
+            var mult2 = MathUtils.divide(r2.denominator(), newDenominator);
+
+            var numerator = MathUtils.add(
+                    mult1.equalsConstant(OptimizationConstant.ONE) ? r1.numerator() : MathUtils.divide(r1.numerator(), mult1),
+                    mult2.equalsConstant(OptimizationConstant.ONE) ? r2.numerator() : MathUtils.divide(r2.numerator(), mult2)
+            );
+
+            return optimizeRatio(numerator, newDenominator);
+            /*
+            if (r1.denominator().compareTo(r2.denominator()) == 0)
+                return optimizeRatio(MathUtils.add(r1.numerator(), r2.numerator()), r1.denominator());
+
+            IO.println(r1.denominator());
+            IO.println(r2.denominator());
             var newDenominator = GreatestCommonDivisorFunction.greatestCommonDivisor(r1.denominator(), r2.denominator());
 
             var mult1 = MathUtils.divide(r1.denominator(), newDenominator);
             var mult2 = MathUtils.divide(r2.denominator(), newDenominator);
 
             var numerator = MathUtils.add(
-                    MathUtils.divide(r1.numerator(), mult1),
-                    MathUtils.divide(r2.numerator(), mult2)
+                    mult1.equalsConstant(OptimizationConstant.ONE) ? r1.numerator() : MathUtils.divide(r1.numerator(), mult1),
+                    mult2.equalsConstant(OptimizationConstant.ONE) ? r2.numerator() : MathUtils.divide(r2.numerator(), mult2)
             );
 
             return optimizeRatio(numerator, newDenominator);
+             */
         }
 
         public static Value subtract(RatioValue r1, RatioValue r2) {
-            if (r1.denominator().equals(r2.denominator()))
+            if (r1.denominator().compareTo(r2.denominator()) == 0)
                 return optimizeRatio(MathUtils.subtract(r1.numerator(), r2.numerator()), r1.denominator());
 
             var newDenominator = GreatestCommonDivisorFunction.greatestCommonDivisor(r1.denominator(), r2.denominator());
@@ -88,13 +123,17 @@ public class MathUtils {
         if (b.isZero())
             return a;
 
-        if (a.equals(b.negate()))
+        if (a.compareTo(b.negate()) == 0)
             return BigIntValue.zero();
+
+        if (a instanceof RatioValue || b instanceof RatioValue)
+            return RatioUtils.add(
+                    RatioUtils.valueAsRatio(a),
+                    RatioUtils.valueAsRatio(b)
+            );
 
         if (a instanceof BigIntValue && b instanceof BigIntValue)
             return toValue(a.asBigInteger().add(b.asBigInteger()));
-        if (a instanceof RatioValue && b instanceof RatioValue)
-            return RatioUtils.add((RatioValue) a, ((RatioValue) b));
 
         return toValue(a.asBigDecimal().add(b.asBigDecimal()));
     }
@@ -105,13 +144,17 @@ public class MathUtils {
         if (b.isZero())
             return a;
 
-        if (a.equals(b))
+        if (a.compareTo(b) == 0)
             return BigIntValue.zero();
+
+        if (a instanceof RatioValue || b instanceof RatioValue)
+            return RatioUtils.subtract(
+                    RatioUtils.valueAsRatio(a),
+                    RatioUtils.valueAsRatio(b)
+            );
 
         if (a instanceof BigIntValue && b instanceof BigIntValue)
             return toValue(a.asBigInteger().subtract(b.asBigInteger()));
-        if (a instanceof RatioValue && b instanceof RatioValue)
-            return RatioUtils.subtract((RatioValue) a, ((RatioValue) b));
 
         return toValue(a.asBigDecimal().subtract(b.asBigDecimal()));
     }
@@ -125,23 +168,31 @@ public class MathUtils {
         if (b.equalsConstant(OptimizationConstant.MINUS_ONE))
             return a.negate();
 
-        if (a.equals(b))
+        if (a.compareTo(b) == 0)
             return BigIntValue.one();
 
-        if (a instanceof RatioValue && b instanceof RatioValue)
-            return RatioUtils.divide((RatioValue) a, ((RatioValue) b));
+        if (a instanceof RatioValue || b instanceof RatioValue)
+            return RatioUtils.divide(
+                    RatioUtils.valueAsRatio(a),
+                    RatioUtils.valueAsRatio(b)
+            );
 
         if (a instanceof BigIntValue && b instanceof BigIntValue) {
             var repeating = isRepeatingDecimal(a.asBigInteger(), b.asBigInteger());
-            if (!repeating)
+            if (!repeating) {
+                var remainderRemains = a.asBigInteger().remainder(b.asBigInteger()).compareTo(BigInteger.ZERO) != 0;
+
+                if (remainderRemains)
+                    return toValue(a.asBigDecimal().divide(b.asBigDecimal(), MathContext.DECIMAL128));
                 return toValue(a.asBigInteger().divide(b.asBigInteger()));
+            }
         } else {
             var repeating = isRepeatingDecimal(a.asBigDecimal(), b.asBigDecimal());
             if (!repeating)
                 return toValue(a.asBigDecimal().divide(b.asBigDecimal(), MathContext.DECIMAL128));
         }
 
-        return new Value.RatioValue(a, b);
+        return new RatioValue(a, b);
     }
 
     public static Value multiply(Value a, Value b) {
@@ -157,10 +208,14 @@ public class MathUtils {
         if (b.equalsConstant(OptimizationConstant.MINUS_ONE))
             return a.negate();
 
+        if (a instanceof RatioValue || b instanceof RatioValue)
+            return RatioUtils.multiply(
+                    RatioUtils.valueAsRatio(a),
+                    RatioUtils.valueAsRatio(b)
+            );
+
         if (a instanceof BigIntValue && b instanceof BigIntValue)
             return toValue(a.asBigInteger().multiply(b.asBigInteger()));
-        if (a instanceof RatioValue && b instanceof RatioValue)
-            return RatioUtils.multiply((RatioValue) a, ((RatioValue) b));
 
         return toValue(a.asBigDecimal().multiply(b.asBigDecimal()));
     }
@@ -228,7 +283,7 @@ public class MathUtils {
 
         // Удалить все 5
         BigInteger five = BigInteger.valueOf(5);
-        while (reducedN.remainder(five).equals(BigInteger.ZERO)) {
+        while (reducedN.remainder(five).compareTo(BigInteger.ZERO) == 0) {
             reducedN = reducedN.divide(five);
         }
 

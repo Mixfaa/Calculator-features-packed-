@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 
 public sealed interface MathComponent {
-    MathComponent.Value calculate();
+    Value calculate();
 
     default boolean isEmpty() {
         return false;
@@ -18,7 +18,6 @@ public sealed interface MathComponent {
         }
     }
 
-
     static public sealed interface Value extends MathComponent {
         BigInteger asBigInteger();
 
@@ -29,6 +28,8 @@ public sealed interface MathComponent {
         int signum();
 
         Value abs();
+
+        int compareTo(Value other);
 
         boolean equalsConstant(OptimizationConstant constant);
 
@@ -59,6 +60,11 @@ public sealed interface MathComponent {
             }
 
             @Override
+            public int compareTo(Value other) {
+                return MathCompare.compareTo(value, other);
+            }
+
+            @Override
             public Value calculate() {
                 return this;
             }
@@ -85,7 +91,6 @@ public sealed interface MathComponent {
         }
 
         record BigDecimalValue(BigDecimal value) implements Value {
-
             @Override
             public int signum() {
                 return value.signum();
@@ -120,6 +125,11 @@ public sealed interface MathComponent {
             public boolean equalsConstant(OptimizationConstant constant) {
                 return value.compareTo(constant.decimalValue()) == 0;
             }
+
+            @Override
+            public int compareTo(Value other) {
+                return MathCompare.compareTo(value, other);
+            }
         }
 
         // prefers negative numerator
@@ -144,6 +154,11 @@ public sealed interface MathComponent {
             }
 
             @Override
+            public int compareTo(Value other) {
+                return MathCompare.compareTo(this, other);
+            }
+
+            @Override
             public BigInteger asBigInteger() {
                 return asBigDecimal().toBigInteger();
             }
@@ -154,7 +169,7 @@ public sealed interface MathComponent {
 
             @Override
             public Value negate() {
-                if (numerator.signum() < 0)
+                if (numerator.signum() == -1)
                     return new RatioValue(numerator.negate(), denominator.negate());
                 else
                     return new RatioValue(numerator, denominator.negate());
@@ -169,7 +184,6 @@ public sealed interface MathComponent {
                             (numerator.signum() == -1 && denominator.signum() == 1) || (numerator.signum() == 1 && denominator.signum() == -1)
                     );
                 };
-
             }
 
             @Override
