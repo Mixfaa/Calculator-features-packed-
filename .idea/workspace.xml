@@ -33,6 +33,7 @@
     "JUnit.CalculatorTest.executor": "Run",
     "JUnit.CalculatorTest.test1.executor": "Run",
     "JUnit.RatioTest.test.executor": "Run",
+    "JUnit.java in calculator.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -45,7 +46,7 @@
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
-  <component name="RunManager" selected="JUnit.java in calculator">
+  <component name="RunManager" selected="Application.Main (1)">
     <configuration name="Main (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="UNNAMED_CLASS_CONFIGURATION" value="true" />
       <option name="MAIN_CLASS_NAME" value="Main" />
@@ -93,8 +94,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.java in calculator" />
         <item itemvalue="Application.Main (1)" />
+        <item itemvalue="JUnit.java in calculator" />
         <item itemvalue="JUnit.CalculatorTest" />
         <item itemvalue="JUnit.RatioTest.test" />
         <item itemvalue="JUnit.CalculatorTest.test1" />

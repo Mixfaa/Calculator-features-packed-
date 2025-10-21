@@ -88,6 +88,11 @@ public sealed interface MathComponent {
             public boolean equalsConstant(OptimizationConstant constant) {
                 return value.compareTo(constant.intValue()) == 0;
             }
+
+            @Override
+            public String toString() {
+                return value.toString();
+            }
         }
 
         record BigDecimalValue(BigDecimal value) implements Value {
@@ -129,6 +134,11 @@ public sealed interface MathComponent {
             @Override
             public int compareTo(Value other) {
                 return MathCompare.compareTo(value, other);
+            }
+
+            @Override
+            public String toString() {
+                return value.toString();
             }
         }
 
@@ -189,6 +199,11 @@ public sealed interface MathComponent {
             @Override
             public Value calculate() {
                 return this;
+            }
+
+            @Override
+            public String toString() {
+                return numerator.toString() + "/" + denominator.toString();
             }
         }
     }
