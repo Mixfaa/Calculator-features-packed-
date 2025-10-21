@@ -1,18 +1,18 @@
 import com.mixfa.calculator.MathComponent;
+import com.mixfa.calculator.ValueFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.mixfa.calculator.MathUtils.toValue;
 
 public class RatioTest {
     @Test
     public void test() {
         var ratio = new MathComponent.Value.RatioValue(
-                toValue(-1),
-                toValue(-1)
+                ValueFactory.toValue(-1),
+                ValueFactory.toValue(-1)
         );
 
-        Assertions.assertEquals(ratio.numerator(), toValue(1));
-        Assertions.assertEquals(ratio.denominator(), toValue(1));
+        Assertions.assertEquals(ratio.numerator(), ValueFactory.toValue(1));
+        Assertions.assertEquals(ratio.denominator(), ValueFactory.toValue(1));
     }
 }

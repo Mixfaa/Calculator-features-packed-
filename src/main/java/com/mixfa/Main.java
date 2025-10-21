@@ -1,18 +1,9 @@
-import com.mixfa.calculator.FunctionComponent;
-import com.mixfa.calculator.MathConstant;
-import com.mixfa.calculator.MathParserBuilder;
-import com.mixfa.calculator.MathUtils;
+import com.mixfa.calculator.*;
 import com.mixfa.calculator.exception.MathParsingException;
 
-import static com.mixfa.calculator.MathUtils.toValue;
 
 void main() throws MathParsingException {
-    var parser = new MathParserBuilder()
-            .addDefaults()
-            .addConstant(new MathConstant("x", toValue(25)))
-            .addFunction(new FunctionComponent.FunctionComponent0("rand", () -> MathUtils.toValue(Math.random())))
-            .addFunction(new FunctionComponent.FunctionComponent1("negate", (arg) -> arg.calculate().negate()))
-            .build();
+    var parser = new MathParserBuilder().addDefaults().build();
 
 //    IO.println(parser.parse("rand()+negate(x)").calculate());
 //    IO.println(parser.parse("1/2").calculate());

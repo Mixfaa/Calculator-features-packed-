@@ -13,11 +13,11 @@ public class MathParserBuilder {
     private final List<FunctionComponent> functions = new ArrayList<>();
     private final List<MathConstant> constants = new ArrayList<>();
     protected static final List<FunctionComponent> DEFAULT_FUNCTIONS = List.of(
-            new FunctionComponent.FunctionComponent1("sin", val -> MathUtils.toValue(BigDecimalMath.sin(val.asBigDecimal(), MathContext.DECIMAL128))),
-            new FunctionComponent.FunctionComponent1("cos", val -> MathUtils.toValue(BigDecimalMath.cos(val.asBigDecimal(), MathContext.DECIMAL128))),
-            new FunctionComponent.FunctionComponent1("tan", val -> MathUtils.toValue(BigDecimalMath.tan(val.asBigDecimal(), MathContext.DECIMAL128))),
-            new FunctionComponent.FunctionComponent1("sqrt", val -> MathUtils.toValue(BigDecimalMath.sqrt(val.asBigDecimal(), MathContext.DECIMAL128))),
-            new FunctionComponent.FunctionComponent2("pow", (arg1, arg2) -> MathUtils.toValue(BigDecimalMath.pow(arg1.asBigDecimal(), arg2.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent1("sin", val -> ValueFactory.toValue(BigDecimalMath.sin(val.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent1("cos", val -> ValueFactory.toValue(BigDecimalMath.cos(val.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent1("tan", val -> ValueFactory.toValue(BigDecimalMath.tan(val.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent1("sqrt", val -> ValueFactory.toValue(BigDecimalMath.sqrt(val.asBigDecimal(), MathContext.DECIMAL128))),
+            new FunctionComponent.FunctionComponent2("pow", (arg1, arg2) -> ValueFactory.toValue(BigDecimalMath.pow(arg1.asBigDecimal(), arg2.asBigDecimal(), MathContext.DECIMAL128))),
             GreatestCommonDivisorFunction.greatestCommonDivisor(),
             LowestCommonMultipleFunction.lowestCommonMultiple()
     );

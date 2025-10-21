@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.Supplier;
 
-import static com.mixfa.calculator.MathUtils.toValue;
+import static com.mixfa.calculator.ValueFactory.toValue;
 
 public class LowestCommonMultipleFunction {
     private static final Supplier<FunctionComponent.FunctionComponent2> FUNCTION = StableValue.supplier(

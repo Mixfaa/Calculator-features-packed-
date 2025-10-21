@@ -82,7 +82,8 @@ public class MathParser {
                 return node.comp();
             }
 
-        return node.comp();
+        throw new MathParsingException("Not parsed component " + comp);
+//        return node.comp();
     }
 
     public MathComponent parse(String input) throws MathParsingException {
@@ -124,10 +125,14 @@ public class MathParser {
                 }
             }
         }
-        if (!str.isEmpty())
-            tree.add(str.toString(), ' ');
-        if (bracketsContent != null)
-            tree.add(bracketsContent, ' ');
+        if (!str.isEmpty() && bracketsContent != null)
+            tree.add(str + bracketsContent, ' ');
+        else {
+            if (!str.isEmpty())
+                tree.add(str.toString(), ' ');
+            if (bracketsContent != null)
+                tree.add(bracketsContent, ' ');
+        }
         return tree.parse();
     }
 

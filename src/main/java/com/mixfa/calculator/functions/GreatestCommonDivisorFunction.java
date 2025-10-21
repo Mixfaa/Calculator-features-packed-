@@ -3,12 +3,11 @@ package com.mixfa.calculator.functions;
 import com.mixfa.calculator.FunctionComponent;
 import com.mixfa.calculator.MathComponent;
 import com.mixfa.calculator.MathComponent.Value.BigIntValue;
+import com.mixfa.calculator.ValueFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.Supplier;
-
-import static com.mixfa.calculator.MathUtils.toValue;
 
 public class GreatestCommonDivisorFunction {
     private static final Supplier<FunctionComponent.FunctionComponent2> FUNCTION = StableValue.supplier(
@@ -35,8 +34,8 @@ public class GreatestCommonDivisorFunction {
         if (b.isZero()) return a;
 
         if (a instanceof BigIntValue && b instanceof BigIntValue)
-            return toValue(findGCDRecursive(b.asBigInteger(), a.asBigInteger()));
+            return ValueFactory.toValue(findGCDRecursive(b.asBigInteger(), a.asBigInteger()));
 
-        return toValue(findGCDRecursive(a.asBigDecimal(), b.asBigDecimal()));
+        return ValueFactory.toValue(findGCDRecursive(a.asBigDecimal(), b.asBigDecimal()));
     }
 }

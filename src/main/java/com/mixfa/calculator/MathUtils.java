@@ -9,33 +9,13 @@ import java.math.BigInteger;
 import java.math.MathContext;
 
 import static com.mixfa.calculator.MathComponent.Value.*;
+import static com.mixfa.calculator.ValueFactory.toValue;
 
 public class MathUtils {
     private MathUtils() {
     }
 
     private static class RatioUtils {
-
-        public static Value optimizeRatio(Value newNumerator, Value newDenominator) {
-            if (newNumerator.isZero())
-                return BigIntValue.zero();
-            if (newNumerator.compareTo(newDenominator) == 0)
-                return BigIntValue.one();
-            if (newDenominator.equalsConstant(OptimizationConstant.ONE))
-                return newNumerator;
-
-            var divisor = GreatestCommonDivisorFunction.greatestCommonDivisor(newNumerator, newDenominator);
-            if (!divisor.equalsConstant(OptimizationConstant.ONE))
-                return new RatioValue(
-                        MathUtils.divide(newNumerator, divisor),
-                        MathUtils.divide(newDenominator, divisor)
-                );
-
-            return new RatioValue(
-                    newNumerator,
-                    newDenominator
-            );
-        }
 
         public static RatioValue valueAsRatio(Value value) {
             if (value instanceof RatioValue)
@@ -46,7 +26,7 @@ public class MathUtils {
 
         public static Value add(RatioValue r1, RatioValue r2) {
             if (r1.denominator().compareTo(r2.denominator()) == 0)
-                return optimizeRatio(MathUtils.add(r1.numerator(), r2.numerator()), r1.denominator());
+                return ValueFactory.ratio(MathUtils.add(r1.numerator(), r2.numerator()), r1.denominator());
 
             var newDenominator = LowestCommonMultipleFunction.lowestCommonMultiple(r1.denominator(), r2.denominator());
 
@@ -58,12 +38,12 @@ public class MathUtils {
                     mult2.equalsConstant(OptimizationConstant.ONE) ? r2.numerator() : MathUtils.divide(r2.numerator(), mult2)
             );
 
-            return optimizeRatio(numerator, newDenominator);
+            return ValueFactory.ratio(numerator, newDenominator);
         }
 
         public static Value subtract(RatioValue r1, RatioValue r2) {
             if (r1.denominator().compareTo(r2.denominator()) == 0)
-                return optimizeRatio(MathUtils.subtract(r1.numerator(), r2.numerator()), r1.denominator());
+                return ValueFactory.ratio(MathUtils.subtract(r1.numerator(), r2.numerator()), r1.denominator());
 
             var newDenominator = LowestCommonMultipleFunction.lowestCommonMultiple(r1.denominator(), r2.denominator());
 
@@ -75,14 +55,14 @@ public class MathUtils {
                     mult2.equalsConstant(OptimizationConstant.ONE) ? r2.numerator() : MathUtils.divide(r2.numerator(), mult2)
             );
 
-            return optimizeRatio(numerator, newDenominator);
+            return ValueFactory.ratio(numerator, newDenominator);
         }
 
         public static Value multiply(Value n1, Value d1, Value n2, Value d2) {
             var numerator = MathUtils.multiply(n1, n2);
             var denominator = MathUtils.multiply(d1, d2);
 
-            return optimizeRatio(numerator, denominator);
+            return ValueFactory.ratio(numerator, denominator);
         }
 
         public static Value multiply(RatioValue r1, RatioValue r2) {
@@ -209,30 +189,6 @@ public class MathUtils {
 
         return toValue(BigDecimalMath.pow(a.asBigDecimal(), b.asBigDecimal(), MathContext.DECIMAL128));
     }
-
-    public static Value toValue(BigDecimal value) {
-        if (value.scale() == 0)
-            return new BigIntValue(value.toBigInteger());
-
-        return new BigDecimalValue(value);
-    }
-
-    public static Value toValue(double value) {
-        return toValue(new BigDecimal(String.valueOf(value)));
-    }
-
-    public static Value toValue(long value) {
-        return new BigIntValue(new BigInteger(String.valueOf(value)));
-    }
-
-    public static Value toValue(String value) {
-        return toValue(new BigDecimal(value));
-    }
-
-    public static Value toValue(BigInteger value) {
-        return new BigIntValue(value);
-    }
-
 
     public static boolean isRepeatingDecimal(BigDecimal a, BigDecimal b) {
         if (b.signum() == 0) {
