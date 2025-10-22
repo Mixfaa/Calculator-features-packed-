@@ -26,17 +26,17 @@ public class MathParser {
             return node.comp();
 
         if (comp.equals("0") || comp.equals("0.0")) {
-            node.comp(MathComponent.Value.BigIntValue.zero());
+            node.comp(ValueFactory.zero());
             return node.comp();
         }
 
         if (intNumberPattern.matcher(comp).find()) {
-            node.comp(new MathComponent.Value.BigIntValue(new BigInteger(comp)));
+            node.comp(ValueFactory.toValue(new BigInteger(comp)));
             return node.comp();
         }
 
         if (realNumberPattern.matcher(comp).find()) {
-            node.comp(new MathComponent.Value.BigDecimalValue(new BigDecimal(comp)));
+            node.comp(ValueFactory.toValue(new BigDecimal(comp)));
             return node.comp();
         }
 
@@ -83,11 +83,10 @@ public class MathParser {
             }
 
         throw new MathParsingException("Not parsed component " + comp);
-//        return node.comp();
     }
 
     public MathComponent parse(String input) throws MathParsingException {
-        if (input.isBlank()) return MathComponent.Value.BigIntValue.zero();
+        if (input.isBlank()) return ValueFactory.zero();
         final var operatorSymbols = "+-/*^";
 
         var tree = new Tree(this);

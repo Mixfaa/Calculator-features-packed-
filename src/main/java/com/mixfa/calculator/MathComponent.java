@@ -1,11 +1,20 @@
 package com.mixfa.calculator;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 public sealed interface MathComponent {
     Value calculate();
+
+    default int chainLength() {
+        return 1;
+    }
 
     default boolean isEmpty() {
         return false;
@@ -14,7 +23,18 @@ public sealed interface MathComponent {
     record Unparsed(String comp) implements MathComponent {
         @Override
         public Value calculate() {
-            throw new UnsupportedOperationException("Not supported. Comp: " + comp);
+            throw new UnsupportedOperationException("Unparsed component: " + comp);
+        }
+    }
+
+    static public sealed interface Operation extends MathComponent {
+        MathComponent compA();
+
+        MathComponent compB();
+
+        @Override
+        default int chainLength() {
+            return compA().chainLength() + compB().chainLength();
         }
     }
 
@@ -153,6 +173,11 @@ public sealed interface MathComponent {
             }
 
             @Override
+            public int chainLength() {
+                return 2;
+            }
+
+            @Override
             public int signum() {
                 return numerator.signum() * denominator.signum();
             }
@@ -208,47 +233,46 @@ public sealed interface MathComponent {
         }
     }
 
-    record Add(MathComponent compA,
-               MathComponent compB
-    ) implements MathComponent {
-        @Override
-        public Value calculate() {
-            return MathUtils.add(compA.calculate(), compB.calculate());
-        }
-    }
+    @Accessors(fluent = true)
+    @Getter
+    final class AnyOperation implements Operation {
+        private final MathComponent compA;
+        private final MathComponent compB;
+        private final BiFunction<MathComponent, MathComponent, Value> operation;
 
-    record Subtract(MathComponent compA,
-                    MathComponent compB
-    ) implements MathComponent {
-        @Override
-        public Value calculate() {
-            return MathUtils.subtract(compA.calculate(), compB.calculate());
-        }
-    }
+        private final Supplier<Value> calculatedValue;
 
-    record Multiply(MathComponent compA,
-                    MathComponent compB
-    ) implements MathComponent {
-        @Override
-        public Value calculate() {
-            return MathUtils.multiply(compA.calculate(), compB.calculate());
-        }
-    }
+        public AnyOperation(MathComponent compA, MathComponent compB, BiFunction<MathComponent, MathComponent, Value> operation) {
+            this.compA = compA;
+            this.compB = compB;
+            this.operation = operation;
 
-    record Divide(MathComponent compA,
-                  MathComponent compB
-    ) implements MathComponent {
-        @Override
-        public Value calculate() {
-            return MathUtils.divide(compA.calculate(), compB.calculate());
+            this.calculatedValue = StableValue.supplier(() -> operation.apply(compA, compB));
         }
-    }
 
-    record Power(MathComponent compA,
-                 MathComponent compB) implements MathComponent {
         @Override
         public Value calculate() {
-            return MathUtils.power(compA.calculate(), compB.calculate());
+            return calculatedValue.get();
+        }
+
+        public static AnyOperation add(MathComponent compA, MathComponent compB) {
+            return new AnyOperation(compA, compB, MathUtils::add);
+        }
+
+        public static AnyOperation subtract(MathComponent compA, MathComponent compB) {
+            return new AnyOperation(compA, compB, MathUtils::subtract);
+        }
+
+        public static AnyOperation multiply(MathComponent compA, MathComponent compB) {
+            return new AnyOperation(compA, compB, MathUtils::multiply);
+        }
+
+        public static AnyOperation divide(MathComponent compA, MathComponent compB) {
+            return new AnyOperation(compA, compB, MathUtils::divide);
+        }
+
+        public static AnyOperation power(MathComponent compA, MathComponent compB) {
+            return new AnyOperation(compA, compB, MathUtils::power);
         }
     }
 }

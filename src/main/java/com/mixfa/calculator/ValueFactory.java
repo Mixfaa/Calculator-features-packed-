@@ -36,9 +36,6 @@ public interface ValueFactory {
     }
 
     public static MathComponent.Value toValue(BigDecimal value) {
-        if (value.scale() == 0)
-            return new MathComponent.Value.BigIntValue(value.toBigInteger());
-
         return new MathComponent.Value.BigDecimalValue(value);
     }
 

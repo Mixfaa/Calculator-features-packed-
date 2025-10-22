@@ -59,11 +59,11 @@ class Tree {
             var patched = true;
             switch (currentNode.operator()) {
                 case '^' ->
-                        currentNode.comp = new MathComponent.Power(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
+                        currentNode.comp = MathComponent.AnyOperation.power(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
                 case '*' ->
-                        currentNode.comp = new MathComponent.Multiply(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
+                        currentNode.comp = MathComponent.AnyOperation.multiply(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
                 case '/' ->
-                        currentNode.comp = new MathComponent.Divide(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
+                        currentNode.comp = MathComponent.AnyOperation.divide(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
                 default -> patched = false;
             }
             return patched;
@@ -73,9 +73,9 @@ class Tree {
             var patched = true;
             switch (currentNode.operator()) {
                 case '+' ->
-                        currentNode.comp = new MathComponent.Add(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
+                        currentNode.comp = MathComponent.AnyOperation.add(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
                 case '-' ->
-                        currentNode.comp = new MathComponent.Subtract(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
+                        currentNode.comp = MathComponent.AnyOperation.subtract(mathParser.parseNode(currentNode), mathParser.parseNode(currentNode.next));
                 default -> patched = false;
             }
             return patched;

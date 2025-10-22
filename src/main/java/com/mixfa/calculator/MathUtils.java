@@ -1,7 +1,6 @@
 package com.mixfa.calculator;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
-import com.mixfa.calculator.functions.GreatestCommonDivisorFunction;
 import com.mixfa.calculator.functions.LowestCommonMultipleFunction;
 
 import java.math.BigDecimal;
@@ -74,120 +73,105 @@ public class MathUtils {
         }
     }
 
-    public static Value add(Value a, Value b) {
-        if (a.isZero())
-            return b;
-        if (b.isZero())
-            return a;
+    public static Value add(MathComponent a, MathComponent b) {
+        var optimizedValue = OptimizationUtils.add(a, b);
+        if (optimizedValue != null) return optimizedValue;
 
-        if (a.compareTo(b.negate()) == 0)
-            return BigIntValue.zero();
+        var aValue = a.calculate();
+        var bValue = b.calculate();
 
-        if (a instanceof RatioValue || b instanceof RatioValue)
+        if (aValue instanceof RatioValue || bValue instanceof RatioValue)
             return RatioUtils.add(
-                    RatioUtils.valueAsRatio(a),
-                    RatioUtils.valueAsRatio(b)
+                    RatioUtils.valueAsRatio(aValue),
+                    RatioUtils.valueAsRatio(bValue)
             );
 
-        if (a instanceof BigIntValue && b instanceof BigIntValue)
-            return toValue(a.asBigInteger().add(b.asBigInteger()));
+        if (aValue instanceof BigIntValue && bValue instanceof BigIntValue)
+            return toValue(aValue.asBigInteger().add(bValue.asBigInteger()));
 
-        return toValue(a.asBigDecimal().add(b.asBigDecimal()));
+        return toValue(aValue.asBigDecimal().add(bValue.asBigDecimal()));
     }
 
-    public static Value subtract(Value a, Value b) {
-        if (a.isZero())
-            return b.negate();
-        if (b.isZero())
-            return a;
+    public static Value subtract(MathComponent a, MathComponent b) {
+        var optimizedValue = OptimizationUtils.subtract(a, b);
+        if (optimizedValue != null) return optimizedValue;
 
-        if (a.compareTo(b) == 0)
-            return BigIntValue.zero();
+        var aValue = a.calculate();
+        var bValue = b.calculate();
 
-        if (a instanceof RatioValue || b instanceof RatioValue)
+        if (aValue instanceof RatioValue || bValue instanceof RatioValue)
             return RatioUtils.subtract(
-                    RatioUtils.valueAsRatio(a),
-                    RatioUtils.valueAsRatio(b)
+                    RatioUtils.valueAsRatio(aValue),
+                    RatioUtils.valueAsRatio(bValue)
             );
 
-        if (a instanceof BigIntValue && b instanceof BigIntValue)
-            return toValue(a.asBigInteger().subtract(b.asBigInteger()));
+        if (aValue instanceof BigIntValue && bValue instanceof BigIntValue)
+            return toValue(aValue.asBigInteger().subtract(bValue.asBigInteger()));
 
-        return toValue(a.asBigDecimal().subtract(b.asBigDecimal()));
+        return toValue(aValue.asBigDecimal().subtract(bValue.asBigDecimal()));
     }
 
-    public static Value divide(Value a, Value b) {
-        if (a.isZero()) return BigIntValue.zero();
-        if (b.isZero()) throw new ArithmeticException("Division by zero");
+    public static Value divide(MathComponent a, MathComponent b) {
+        var optimizedValue = OptimizationUtils.divide(a, b);
+        if (optimizedValue != null) return optimizedValue;
 
-        if (b.equalsConstant(OptimizationConstant.ONE))
-            return a;
-        if (b.equalsConstant(OptimizationConstant.MINUS_ONE))
-            return a.negate();
+        var aValue = a.calculate();
+        var bValue = b.calculate();
 
-        if (a.compareTo(b) == 0)
-            return BigIntValue.one();
-
-        if (a instanceof RatioValue || b instanceof RatioValue)
+        if (aValue instanceof RatioValue || bValue instanceof RatioValue)
             return RatioUtils.divide(
-                    RatioUtils.valueAsRatio(a),
-                    RatioUtils.valueAsRatio(b)
+                    RatioUtils.valueAsRatio(aValue),
+                    RatioUtils.valueAsRatio(bValue)
             );
 
-        if (a instanceof BigIntValue && b instanceof BigIntValue) {
-            var repeating = isRepeatingDecimal(a.asBigInteger(), b.asBigInteger());
+        if (aValue instanceof BigIntValue && bValue instanceof BigIntValue) {
+            var repeating = isRepeatingDecimal(aValue.asBigInteger(), bValue.asBigInteger());
             if (!repeating) {
-                var remainderRemains = a.asBigInteger().remainder(b.asBigInteger()).compareTo(BigInteger.ZERO) != 0;
+                var remainderRemains = aValue.asBigInteger().remainder(bValue.asBigInteger()).compareTo(BigInteger.ZERO) != 0;
 
                 if (remainderRemains)
-                    return toValue(a.asBigDecimal().divide(b.asBigDecimal(), MathContext.DECIMAL128));
-                return toValue(a.asBigInteger().divide(b.asBigInteger()));
+                    return toValue(aValue.asBigDecimal().divide(bValue.asBigDecimal(), MathContext.DECIMAL128));
+                return toValue(aValue.asBigInteger().divide(bValue.asBigInteger()));
             }
         } else {
-            var repeating = isRepeatingDecimal(a.asBigDecimal(), b.asBigDecimal());
+            var repeating = isRepeatingDecimal(aValue.asBigDecimal(), bValue.asBigDecimal());
             if (!repeating)
-                return toValue(a.asBigDecimal().divide(b.asBigDecimal(), MathContext.DECIMAL128));
+                return toValue(aValue.asBigDecimal().divide(bValue.asBigDecimal(), MathContext.DECIMAL128));
         }
 
-        return new RatioValue(a, b);
+        return new RatioValue(aValue, bValue);
     }
 
-    public static Value multiply(Value a, Value b) {
-        if (a.isZero() || b.isZero()) return BigIntValue.zero();
+    public static Value multiply(MathComponent a, MathComponent b) {
+        var optimizedValue = OptimizationUtils.multiply(a, b);
+        if (optimizedValue != null) return optimizedValue;
 
-        if (a.equalsConstant(OptimizationConstant.ONE))
-            return b;
-        if (b.equalsConstant(OptimizationConstant.ONE))
-            return a;
+        var aValue = a.calculate();
+        var bValue = b.calculate();
 
-        if (a.equalsConstant(OptimizationConstant.MINUS_ONE))
-            return b.negate();
-        if (b.equalsConstant(OptimizationConstant.MINUS_ONE))
-            return a.negate();
-
-        if (a instanceof RatioValue || b instanceof RatioValue)
+        if (aValue instanceof RatioValue || bValue instanceof RatioValue)
             return RatioUtils.multiply(
-                    RatioUtils.valueAsRatio(a),
-                    RatioUtils.valueAsRatio(b)
+                    RatioUtils.valueAsRatio(aValue),
+                    RatioUtils.valueAsRatio(bValue)
             );
 
-        if (a instanceof BigIntValue && b instanceof BigIntValue)
-            return toValue(a.asBigInteger().multiply(b.asBigInteger()));
+        if (aValue instanceof BigIntValue && bValue instanceof BigIntValue)
+            return toValue(aValue.asBigInteger().multiply(bValue.asBigInteger()));
 
-        return toValue(a.asBigDecimal().multiply(b.asBigDecimal()));
+        return toValue(aValue.asBigDecimal().multiply(bValue.asBigDecimal()));
     }
 
-    public static Value power(Value a, Value b) {
-        if (a.isZero()) return BigIntValue.zero();
-        if (b.isZero()) return BigIntValue.one();
+    public static Value power(MathComponent a, MathComponent b) {
+        var optimizedValue = OptimizationUtils.power(a, b);
+        if (optimizedValue != null) return optimizedValue;
 
-        if (b.equalsConstant(OptimizationConstant.ONE))
-            return a;
+        var aValue = a.calculate();
+        var bValue = b.calculate();
 
-        if (a instanceof BigIntValue && b instanceof BigIntValue)
-            return toValue(a.asBigInteger().pow(b.asBigInteger().intValue()));
+        if (aValue instanceof BigIntValue && bValue instanceof BigIntValue)
+            return toValue(aValue.asBigInteger().pow(bValue.asBigInteger().intValue()));
 
-        return toValue(BigDecimalMath.pow(a.asBigDecimal(), b.asBigDecimal(), MathContext.DECIMAL128));
+        return toValue(BigDecimalMath.pow(aValue.asBigDecimal(), bValue.asBigDecimal(), MathContext.DECIMAL128));
     }
 
     public static boolean isRepeatingDecimal(BigDecimal a, BigDecimal b) {
