@@ -47,8 +47,50 @@
                     <source>25</source>
                     <target>25</target>
                     <compilerArgs>--enable-preview</compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.42</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!-- Explicitly set version to match the one used in the log -->
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
+            </plugin>
+            <!-- START: Plugin to create a self-contained (uber) JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!-- This defines the main class so the JAR can be executed with 'java -jar' -->
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!-- !!! REPLACE WITH YOUR ACTUAL MAIN CLASS !!! -->
+                                    <mainClass>com.mixfa.calculator.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                            <!-- Renames the output file to clearly distinguish it as the runnable JAR -->
+                            <finalName>${project.artifactId}-standalone</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- END: Plugin to create a self-contained (uber) JAR -->
         </plugins>
     </build>
 </project>

@@ -184,8 +184,12 @@ public sealed interface MathComponent {
 
             @Override
             public Value abs() {
-                return new RatioValue(numerator.signum() == -1 ? numerator.abs() : numerator,
-                        denominator.signum() == -1 ? denominator.abs() : denominator);
+                if (numerator.signum() == -1)
+                    return new RatioValue(numerator.negate(), denominator);
+                else if (denominator.signum() == -1)
+                    return new RatioValue(numerator, denominator.negate());
+
+                return this;
             }
 
             @Override

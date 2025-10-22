@@ -32,7 +32,6 @@ public class Utils {
         }
 
         throw new MathParsingException("Cannot find closing bracket");
-
     }
 
     public static String getArgs(String comp) throws MathParsingException {

@@ -27,7 +27,6 @@ public class OptimizationUtils {
         if (b.calculate().equalsConstant(constant))
             return 1;
 
-
         return 0;
     }
 
@@ -51,7 +50,7 @@ public class OptimizationUtils {
             return bValue;
 
         if (aValue.compareTo(bValue.negate()) == 0)
-            return Value.BigIntValue.zero();
+            return ValueFactory.zero();
 
         return null;
     }
@@ -68,7 +67,7 @@ public class OptimizationUtils {
             return aValue;
 
         if (aValue.compareTo(bValue) == 0)
-            return Value.BigIntValue.zero();
+            return ValueFactory.zero();
 
         return null;
     }
@@ -80,7 +79,7 @@ public class OptimizationUtils {
         var bValue = b.calculate();
 
         if (zeroPos == -1)
-            return Value.BigIntValue.zero();
+            return ValueFactory.zero();
         if (zeroPos == 1)
             throw new ArithmeticException("Division by zero");
 
@@ -90,7 +89,7 @@ public class OptimizationUtils {
             return aValue.negate();
 
         if (aValue.compareTo(bValue) == 0)
-            return Value.BigIntValue.one();
+            return ValueFactory.one();
 
         return null;
     }
@@ -131,5 +130,4 @@ public class OptimizationUtils {
 
         return null;
     }
-
 }

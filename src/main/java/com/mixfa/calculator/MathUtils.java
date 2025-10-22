@@ -20,7 +20,7 @@ public class MathUtils {
             if (value instanceof RatioValue)
                 return (RatioValue) value;
 
-            return new RatioValue(value, BigIntValue.one());
+            return new RatioValue(value, ValueFactory.one());
         }
 
         public static Value add(RatioValue r1, RatioValue r2) {
@@ -125,7 +125,7 @@ public class MathUtils {
             );
 
         if (aValue instanceof BigIntValue && bValue instanceof BigIntValue) {
-            var repeating = isRepeatingDecimal(aValue.asBigInteger(), bValue.asBigInteger());
+            var repeating = isRepeatingRemainder(aValue.asBigInteger(), bValue.asBigInteger());
             if (!repeating) {
                 var remainderRemains = aValue.asBigInteger().remainder(bValue.asBigInteger()).compareTo(BigInteger.ZERO) != 0;
 
@@ -134,7 +134,7 @@ public class MathUtils {
                 return toValue(aValue.asBigInteger().divide(bValue.asBigInteger()));
             }
         } else {
-            var repeating = isRepeatingDecimal(aValue.asBigDecimal(), bValue.asBigDecimal());
+            var repeating = isRepeatingRemainder(aValue.asBigDecimal(), bValue.asBigDecimal());
             if (!repeating)
                 return toValue(aValue.asBigDecimal().divide(bValue.asBigDecimal(), MathContext.DECIMAL128));
         }
@@ -174,7 +174,7 @@ public class MathUtils {
         return toValue(BigDecimalMath.pow(aValue.asBigDecimal(), bValue.asBigDecimal(), MathContext.DECIMAL128));
     }
 
-    public static boolean isRepeatingDecimal(BigDecimal a, BigDecimal b) {
+    public static boolean isRepeatingRemainder(BigDecimal a, BigDecimal b) {
         if (b.signum() == 0) {
             throw new ArithmeticException("Division by zero");
         }
@@ -209,7 +209,7 @@ public class MathUtils {
         return reducedN.compareTo(BigInteger.ONE) > 0;
     }
 
-    public static boolean isRepeatingDecimal(BigInteger a, BigInteger b) {
+    public static boolean isRepeatingRemainder(BigInteger a, BigInteger b) {
         if (b.signum() == 0) {
             throw new ArithmeticException("Division by zero");
         }

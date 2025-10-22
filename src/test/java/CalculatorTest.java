@@ -45,8 +45,8 @@ public class CalculatorTest {
                 ValueFactory.ratio(
                         ValueFactory.toValue(2),
                         ValueFactory.toValue(3)
-                ),
-                parser.parse("(1/3)+(2/6)").calculate()
+                ).toString(),
+                parser.parse("(1/3)+(2/6)").calculate().toString()
         );
 
         assertEquals(

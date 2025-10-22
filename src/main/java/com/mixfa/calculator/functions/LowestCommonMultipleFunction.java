@@ -19,25 +19,22 @@ public class LowestCommonMultipleFunction {
     }
 
     public static MathComponent.Value findLCM(BigInteger a, BigInteger b) {
-        if (a.compareTo(BigInteger.ZERO) == 0 || b.compareTo(BigInteger.ZERO) == 0) {
+        if (a.compareTo(BigInteger.ZERO) == 0 || b.compareTo(BigInteger.ZERO) == 0)
             return MathComponent.Value.BigIntValue.zero();
-        }
 
         return toValue(a.multiply(b).abs().divide(GreatestCommonDivisorFunction.findGCDRecursive(a, b)));
     }
 
     public static MathComponent.Value findLCM(BigDecimal a, BigDecimal b) {
-        if (a.compareTo(BigDecimal.ZERO) == 0 || b.compareTo(BigDecimal.ZERO) == 0) {
+        if (a.compareTo(BigDecimal.ZERO) == 0 || b.compareTo(BigDecimal.ZERO) == 0)
             return MathComponent.Value.BigIntValue.zero();
-        }
 
         return toValue(a.multiply(b).abs().divide(GreatestCommonDivisorFunction.findGCDRecursive(a, b)));
     }
 
     public static MathComponent.Value lowestCommonMultiple(MathComponent.Value a, MathComponent.Value b) {
-        if (a.isZero() || b.isZero()) {
+        if (a.isZero() || b.isZero())
             return MathComponent.Value.BigIntValue.zero();
-        }
 
         if (a instanceof MathComponent.Value.BigIntValue && b instanceof MathComponent.Value.BigIntValue)
             return findLCM(a.asBigInteger(), b.asBigInteger());

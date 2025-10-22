@@ -16,6 +16,7 @@ class Tree {
     private final MathParser mathParser;
 
     public void add(String strComp, char operator) throws MathParsingException {
+        IO.println("adding " + strComp + " " + operator);
         MathComponent component = null;
         if (strComp.startsWith("(") && strComp.endsWith(")"))
             component = mathParser.parse(strComp.substring(1, strComp.length() - 1));
@@ -30,11 +31,7 @@ class Tree {
         while (currentNode.next != null)
             currentNode = currentNode.next;
 
-        currentNode.next = new TreeNode(
-                component,
-                operator,
-                null
-        );
+        currentNode.next = new TreeNode(component, operator, null);
     }
 
     private void transform(TreeNodeTransformer transformer) throws MathParsingException {
@@ -51,7 +48,6 @@ class Tree {
             mathParser.parseNode(currentNode);
             currentNode = currentNode.next;
         }
-
     }
 
     public MathComponent parse() throws MathParsingException {
