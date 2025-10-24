@@ -16,7 +16,6 @@ class Tree {
     private final MathParser mathParser;
 
     public void add(String strComp, char operator) throws MathParsingException {
-        IO.println("adding " + strComp + " " + operator);
         MathComponent component = null;
         if (strComp.startsWith("(") && strComp.endsWith(")"))
             component = mathParser.parse(strComp.substring(1, strComp.length() - 1));

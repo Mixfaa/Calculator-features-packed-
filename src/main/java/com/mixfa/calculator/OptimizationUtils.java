@@ -17,15 +17,14 @@ public class OptimizationUtils {
         if (a.chainLength() < b.chainLength()) {
             if (a.calculate().equalsConstant(constant))
                 return -1;
+            if (b.calculate().equalsConstant(constant))
+                return 1;
         } else {
             if (b.calculate().equalsConstant(constant))
                 return 1;
+            if (a.calculate().equalsConstant(constant))
+                return -1;
         }
-
-        if (a.calculate().equalsConstant(constant))
-            return -1;
-        if (b.calculate().equalsConstant(constant))
-            return 1;
 
         return 0;
     }

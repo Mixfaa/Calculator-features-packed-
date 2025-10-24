@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import static com.mixfa.calculator.Utils.findClosingBracketPos;
 import static com.mixfa.calculator.Utils.getArgs;
 
 @RequiredArgsConstructor
@@ -21,7 +20,6 @@ public class MathParser {
     private final FunctionComponent[] functionComponents;
     private final MathConstant[] constants;
 
-    private static final String OPERATOR_SYMBOLS = "+-/*^";
 
     public MathComponent parseNode(Tree.TreeNode node) throws MathParsingException {
         if (!(node.comp() instanceof MathComponent.Unparsed(String comp)))
@@ -95,55 +93,25 @@ public class MathParser {
         if (input.isBlank()) return ValueFactory.zero();
 
         var tree = new Tree(this);
-        var compStrBuilder = new StringBuilder();
-        var chars = input.toCharArray();
-        String bracketsContent = null;
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
 
-            if (c == '(') {
-                var bracketEnd = findClosingBracketPos(input, i);
-                bracketsContent = input.substring(i, bracketEnd + 1);
-                i = bracketEnd;
-                continue;
-            }
-            if (OPERATOR_SYMBOLS.contains(String.valueOf(c))) {
-                if (bracketsContent != null) {
-                    tree.add(bracketsContent, c);
-                    bracketsContent = null;
-                    continue;
-                }
-                if (compStrBuilder.isEmpty()) {
-                    compStrBuilder.append(c);
-                    continue;
-                }
-                tree.add(compStrBuilder.toString(), c);
-                compStrBuilder.delete(0, compStrBuilder.length());
-            } else {
-                compStrBuilder.append(c);
+        var tokens = Parser2.tokenize(input);
+        if (tokens.size() == 1)
+            tree.add(tokens.getFirst(), ' ');
+        else
+            for (int i = 0; i < tokens.size() - 1; i++) {
+                var token = tokens.get(i);
+                var nextToken = tokens.get(i + 1);
 
-                if (isFunctionName(compStrBuilder)) {
-                    var endOfFunction = findClosingBracketPos(input, i + 1);
-                    compStrBuilder.append(input, i + 1, endOfFunction + 1);
-                    i = endOfFunction;
+                if ("+-/*^".contains(token)) {
+                    token = nextToken;
+                    nextToken = (i + 2 >= tokens.size() ? " " : tokens.get(i + 2));
+                    ++i;
                 }
+
+                tree.add(token, nextToken.charAt(0));
             }
-        }
-        if (!compStrBuilder.isEmpty() && bracketsContent != null)
-            tree.add(compStrBuilder + bracketsContent, ' ');
-        else {
-            if (!compStrBuilder.isEmpty())
-                tree.add(compStrBuilder.toString(), ' ');
-            if (bracketsContent != null)
-                tree.add(bracketsContent, ' ');
-        }
+
         return tree.parse();
-    }
-
-    private boolean isFunctionName(StringBuilder str) {
-        for (FunctionComponent functionComponent : functionComponents)
-            if (Utils.equals(functionComponent.prefix(), str)) return true;
-        return false;
     }
 
     private static final Supplier<MathParser> DEFAULT_PARSER = StableValue.supplier(() -> new MathParser(
