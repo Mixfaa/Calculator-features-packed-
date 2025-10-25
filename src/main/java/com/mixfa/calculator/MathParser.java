@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import java.util.stream.Gatherers;
 
 import static com.mixfa.calculator.Utils.getArgs;
 
@@ -94,23 +95,18 @@ public class MathParser {
 
         var tree = new Tree(this);
 
-        var tokens = Parser2.tokenize(input);
-        if (tokens.size() == 1)
-            tree.add(tokens.getFirst(), ' ');
-        else
-            for (int i = 0; i < tokens.size() - 1; i++) {
-                var token = tokens.get(i);
-                var nextToken = tokens.get(i + 1);
+        Parser2.tokenize(input).stream().gather(
+                Gatherers.windowFixed(2)
+        ).forEach(tokensList -> {
+            var token = tokensList.getFirst();
+            var token2 = tokensList.size() > 1 ? tokensList.get(1) : null;
 
-                if ("+-/*^".contains(token)) {
-                    token = nextToken;
-                    nextToken = (i + 2 >= tokens.size() ? " " : tokens.get(i + 2));
-                    ++i;
-                }
-
-                tree.add(token, nextToken.charAt(0));
+            try {
+                tree.add(token, token2 == null ? ' ' : token2.charAt(0));
+            } catch (MathParsingException e) {
+                throw new RuntimeException(e);
             }
-
+        });
         return tree.parse();
     }
 

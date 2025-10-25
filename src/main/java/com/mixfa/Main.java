@@ -8,8 +8,8 @@ public class Main {
 
     public static void main() throws MathParsingException {
 
-//        Parser2.tokenize2("1+32+sin(25)+(-12)+rand()").forEach(System.out::println);
-
+//        Parser2.tokenize("-1").forEach(System.out::println);
+//
         var parser = new MathParserBuilder().addDefaults().build();
 //
         IO.println(parser.parse("1/2").calculate());

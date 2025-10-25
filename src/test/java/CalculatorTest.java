@@ -4,6 +4,7 @@ import com.mixfa.calculator.exception.MathParsingException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -12,6 +13,10 @@ public class CalculatorTest {
     @Test
     public void test1() throws MathParsingException {
         var parser = MathParser.defaultParser();
+        assertEquals(
+                BigInteger.TWO,
+                parser.parse("1-(-1)").calculate().asBigInteger()
+        );
         assertEquals(
                 BigDecimal.valueOf(3),
                 parser.parse("1+2").calculate().asBigDecimal()

@@ -1,6 +1,9 @@
 package com.mixfa.calculator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -36,9 +39,20 @@ public class Parser2 {
         Supplier<String> nextTokenFunc = () -> cachedTokens.empty() ? tokenizer.nextToken() : cachedTokens.pop();
         Supplier<Boolean> hasMoreTokensFunc = () -> !cachedTokens.empty() || tokenizer.hasMoreTokens();
 
+        var firstToken = true;
         while (hasMoreTokensFunc.get()) {
             String token = nextTokenFunc.get();
             if (token.isBlank()) continue;
+
+            if (firstToken) {
+                firstToken = false;
+                if ("+-".contains(token)) {
+                    if (hasMoreTokensFunc.get())
+                        token += nextTokenFunc.get();
+                    else
+                        throw new RuntimeException("First token is a sign, but next token not found");
+                }
+            }
 
             if (hasMoreTokensFunc.get()) {
                 var nextToken = nextTokenFunc.get();
