@@ -75,7 +75,7 @@ public class MathUtils {
 
     public static Value add(MathComponent a, MathComponent b) {
         var optimizedValue = OptimizationUtils.add(a, b);
-        if (optimizedValue != null) return optimizedValue;
+        if (optimizedValue != null) return optimizedValue.calculate();
 
         var aValue = a.calculate();
         var bValue = b.calculate();
@@ -94,7 +94,7 @@ public class MathUtils {
 
     public static Value subtract(MathComponent a, MathComponent b) {
         var optimizedValue = OptimizationUtils.subtract(a, b);
-        if (optimizedValue != null) return optimizedValue;
+        if (optimizedValue != null) return optimizedValue.calculate();
 
         var aValue = a.calculate();
         var bValue = b.calculate();
@@ -113,7 +113,7 @@ public class MathUtils {
 
     public static Value divide(MathComponent a, MathComponent b) {
         var optimizedValue = OptimizationUtils.divide(a, b);
-        if (optimizedValue != null) return optimizedValue;
+        if (optimizedValue != null) return optimizedValue.calculate();
 
         var aValue = a.calculate();
         var bValue = b.calculate();
@@ -144,7 +144,7 @@ public class MathUtils {
 
     public static Value multiply(MathComponent a, MathComponent b) {
         var optimizedValue = OptimizationUtils.multiply(a, b);
-        if (optimizedValue != null) return optimizedValue;
+        if (optimizedValue != null) return optimizedValue.calculate();
 
         var aValue = a.calculate();
         var bValue = b.calculate();
@@ -163,7 +163,7 @@ public class MathUtils {
 
     public static Value power(MathComponent a, MathComponent b) {
         var optimizedValue = OptimizationUtils.power(a, b);
-        if (optimizedValue != null) return optimizedValue;
+        if (optimizedValue != null) return optimizedValue.calculate();
 
         var aValue = a.calculate();
         var bValue = b.calculate();

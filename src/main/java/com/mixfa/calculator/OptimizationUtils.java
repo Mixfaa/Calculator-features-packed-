@@ -1,7 +1,5 @@
 package com.mixfa.calculator;
 
-import com.mixfa.calculator.MathComponent.Value;
-
 public class OptimizationUtils {
     private OptimizationUtils() {
     }
@@ -37,7 +35,7 @@ public class OptimizationUtils {
         return find(a, b, OptimizationConstant.ZERO);
     }
 
-    public static Value add(MathComponent a, MathComponent b) {
+    public static MathComponent add(MathComponent a, MathComponent b) {
         var zeroPos = findZero(a, b);
 
         var aValue = a.calculate();
@@ -54,27 +52,26 @@ public class OptimizationUtils {
         return null;
     }
 
-    public static Value subtract(MathComponent a, MathComponent b) {
+    public static MathComponent subtract(MathComponent a, MathComponent b) {
         var zeroPos = findZero(a, b);
 
-        var aValue = a.calculate();
-        var bValue = b.calculate();
 
+        var bValue = b.calculate();
         if (zeroPos == -1)
             return bValue.negate();
         if (zeroPos == 1)
-            return aValue;
+            return a;
 
+        var aValue = a.calculate();
         if (aValue.compareTo(bValue) == 0)
             return ValueFactory.zero();
 
         return null;
     }
 
-    public static Value divide(MathComponent a, MathComponent b) {
+    public static MathComponent divide(MathComponent a, MathComponent b) {
         var zeroPos = findZero(a, b);
 
-        var aValue = a.calculate();
         var bValue = b.calculate();
 
         if (zeroPos == -1)
@@ -83,7 +80,9 @@ public class OptimizationUtils {
             throw new ArithmeticException("Division by zero");
 
         if (bValue.equalsConstant(OptimizationConstant.ONE))
-            return aValue;
+            return a;
+
+        var aValue = a.calculate();
         if (bValue.equalsConstant(OptimizationConstant.MINUS_ONE))
             return aValue.negate();
 
@@ -93,39 +92,40 @@ public class OptimizationUtils {
         return null;
     }
 
-    public static Value multiply(MathComponent a, MathComponent b) {
+    public static MathComponent multiply(MathComponent a, MathComponent b) {
         if (isAnyZero(a, b)) return ValueFactory.zero();
 
         var onePos = find(a, b, OptimizationConstant.ONE);
-        var aValue = a.calculate();
-        var bValue = b.calculate();
+
 
         if (onePos == -1)
-            return bValue;
+            return b;
         if (onePos == 1)
-            return aValue;
+            return a;
 
         var minusOnePos = find(a, b, OptimizationConstant.MINUS_ONE);
 
+        var bValue = b.calculate();
         if (minusOnePos == -1)
             return bValue.negate();
+
+        var aValue = a.calculate();
         if (minusOnePos == 1)
             return aValue.negate();
 
         return null;
     }
 
-    public static Value power(MathComponent a, MathComponent b) {
+    public static MathComponent power(MathComponent a, MathComponent b) {
         var zeroPos = findZero(a, b);
 
         if (zeroPos == -1) return ValueFactory.zero();
         if (zeroPos == 1) return ValueFactory.one();
 
-        var aValue = a.calculate();
         var bValue = b.calculate();
 
         if (bValue.equalsConstant(OptimizationConstant.ONE))
-            return aValue;
+            return a;
 
         return null;
     }
