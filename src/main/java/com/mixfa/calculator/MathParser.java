@@ -95,18 +95,18 @@ public class MathParser {
 
         var tree = new Tree(this);
 
-        Parser2.tokenize(input).stream().gather(
-                Gatherers.windowFixed(2)
-        ).forEach(tokensList -> {
-            var token = tokensList.getFirst();
-            var token2 = tokensList.size() > 1 ? tokensList.get(1) : null;
+        var tokens = Parser2.tokenize(input);
+        for (int i = 0; i < tokens.size(); i++) {
+            var token = tokens.get(i);
+            ++i;
+            var token2 = tokens.size() > i ? tokens.get(i) : null;
 
             try {
                 tree.add(token, token2 == null ? ' ' : token2.charAt(0));
             } catch (MathParsingException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }
         return tree.parse();
     }
 

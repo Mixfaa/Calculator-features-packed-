@@ -243,14 +243,12 @@ public sealed interface MathComponent {
         private final MathComponent compA;
         private final MathComponent compB;
         private final BiFunction<MathComponent, MathComponent, Value> operation;
-
         private final Supplier<Value> calculatedValue;
 
         public AnyOperation(MathComponent compA, MathComponent compB, BiFunction<MathComponent, MathComponent, Value> operation) {
             this.compA = compA;
             this.compB = compB;
             this.operation = operation;
-
             this.calculatedValue = StableValue.supplier(() -> operation.apply(compA, compB));
         }
 

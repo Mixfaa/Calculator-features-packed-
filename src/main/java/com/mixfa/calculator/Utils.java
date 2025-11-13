@@ -42,15 +42,4 @@ public class Utils {
 
         return comp.substring(index1 + 1, index2);
     }
-
-
-    public static boolean equals(String str, StringBuilder str2) {
-        if (str.length() != str2.length())
-            return false;
-
-        for (int i = 0; i < str.length(); i++)
-            if (str.charAt(i) != str2.charAt(i))
-                return false;
-        return true;
-    }
 }

@@ -97,7 +97,6 @@ public class OptimizationUtils {
 
         var onePos = find(a, b, OptimizationConstant.ONE);
 
-
         if (onePos == -1)
             return b;
         if (onePos == 1)

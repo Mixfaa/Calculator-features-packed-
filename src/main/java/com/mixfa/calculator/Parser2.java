@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class Parser2 {
     private static final Pattern FUNC_PATTERN = Pattern.compile("([a-z]\\w*)");
+    private static final String ALL_OPERATORS = "+-/*^()";
 
-    static String findClosingBracket(Supplier<String> nextToken, Supplier<Boolean> hasNextToken) {
+    static String findClosingBracket(Stack<String> cachedTokens, StringTokenizer tokenizer) {
         int bracketCount = 1;
         StringBuilder tokenBuilder = new StringBuilder();
-        while (hasNextToken.get()) {
-            var token = nextToken.get();
+        while (hasMoreTokens(cachedTokens, tokenizer)) {
+            var token = nextToken(cachedTokens, tokenizer);
             tokenBuilder.append(token);
 
             if (token.equals("("))
@@ -29,45 +29,43 @@ public class Parser2 {
         throw new RuntimeException("Closing bracket not found");
     }
 
+    private static boolean hasMoreTokens(Stack<String> cachedTokens, StringTokenizer tokenizer) {
+        return !cachedTokens.empty() || tokenizer.hasMoreTokens();
+    }
+    private static String nextToken(Stack<String> cachedTokens, StringTokenizer tokenizer) {
+        return cachedTokens.empty() ? tokenizer.nextToken() : cachedTokens.pop();
+    }
     public static List<String> tokenize(String str) {
-        var allOperators = "+-/*^()";
-
         var tokens = new ArrayList<String>();
-
-        var tokenizer = new StringTokenizer(str, allOperators, true);
+        var tokenizer = new StringTokenizer(str, ALL_OPERATORS, true);
         Stack<String> cachedTokens = new Stack<>();
-        Supplier<String> nextTokenFunc = () -> cachedTokens.empty() ? tokenizer.nextToken() : cachedTokens.pop();
-        Supplier<Boolean> hasMoreTokensFunc = () -> !cachedTokens.empty() || tokenizer.hasMoreTokens();
 
         var firstToken = true;
-        while (hasMoreTokensFunc.get()) {
-            String token = nextTokenFunc.get();
+        while (hasMoreTokens(cachedTokens, tokenizer)) {
+            String token = nextToken(cachedTokens, tokenizer);
             if (token.isBlank()) continue;
-
             if (firstToken) {
                 firstToken = false;
                 if ("+-".contains(token)) {
-                    if (hasMoreTokensFunc.get())
-                        token += nextTokenFunc.get();
+                    if (hasMoreTokens(cachedTokens, tokenizer))
+                        token += nextToken(cachedTokens, tokenizer);
                     else
                         throw new RuntimeException("First token is a sign, but next token not found");
                 }
             }
-
-            if (hasMoreTokensFunc.get()) {
-                var nextToken = nextTokenFunc.get();
+            if (hasMoreTokens(cachedTokens, tokenizer)) {
+                var nextToken = nextToken(cachedTokens, tokenizer);
 
                 if (nextToken.equals("(")) {
                     if (FUNC_PATTERN.matcher(token).matches()) {
-                        token += "(" + findClosingBracket(nextTokenFunc, hasMoreTokensFunc);
+                        token += "(" + findClosingBracket(cachedTokens,tokenizer);
                     } else
                         cachedTokens.push(nextToken);
                 } else
                     cachedTokens.push(nextToken);
             }
-
             if (token.equals("(")) {
-                token += findClosingBracket(nextTokenFunc, hasMoreTokensFunc);
+                token += findClosingBracket(cachedTokens,tokenizer);
             }
             tokens.add(token);
         }
