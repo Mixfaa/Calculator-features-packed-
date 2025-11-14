@@ -10,7 +10,7 @@ import com.mixfa.calculator.exception.MathParsingException;
 
 void main() throws MathParsingException {
     var parser = MathParser.defaultParser();
-    IO.println(parser.parse("sin(1)^2").calculate());
+    IO.println(parser.parseInput("sin(1)^2").calculate());
 }
 ```
 
@@ -30,9 +30,9 @@ void main() throws MathParsingException {
             .addFunction(new FunctionComponent.FunctionComponent1("negate", (arg) -> arg.calculate().negate()))
             .build();
 
-    IO.println(parser.parse("rand()+negate(x)").calculate());
-    IO.println(parser.parse("2/2").calculate());
-    IO.println(parser.parse("lcm(25,15)").calculate());
-    IO.println(parser.parse("1-(-1)").calculate());
+    IO.println(parser.parseInput("rand()+negate(x)").calculate());
+    IO.println(parser.parseInput("2/2").calculate());
+    IO.println(parser.parseInput("lcm(25,15)").calculate());
+    IO.println(parser.parseInput("1-(-1)").calculate());
 }
 ```

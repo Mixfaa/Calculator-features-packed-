@@ -29,29 +29,22 @@ public class MathParser {
                 .toArray(MathConstant[]::new);
     }
 
-    public MathComponent parseNode(Tree.TreeNode node) throws MathParsingException {
-        if (!(node.comp() instanceof MathComponent.Unparsed(String comp)))
-            return node.comp();
-
+    public MathComponent parseSimpleComponent(String comp) throws MathParsingException {
         if (comp.equals("0") || comp.equals("0.0")) {
-            node.comp(ValueFactory.zero());
-            return node.comp();
+            return ValueFactory.zero();
         }
 
         if (intNumberPattern.matcher(comp).find()) {
-            node.comp(ValueFactory.toValue(new BigInteger(comp)));
-            return node.comp();
+            return ValueFactory.toValue(new BigInteger(comp));
         }
 
         if (realNumberPattern.matcher(comp).find()) {
-            node.comp(ValueFactory.toValue(new BigDecimal(comp)));
-            return node.comp();
+            return ValueFactory.toValue(new BigDecimal(comp));
         }
 
         var constant = Utils.findMathConstant(comp, constants);
         if (constant != null) {
-            node.comp(constant.value());
-            return node.comp();
+            return constant.value();
         }
 
         for (FunctionComponent functionComponent : functionComponents) {
@@ -65,7 +58,7 @@ public class MathParser {
                         .filter(arg -> !arg.isBlank())
                         .map(it -> {
                             try {
-                                return this.parse(it);
+                                return this.parseInput(it);
                             } catch (MathParsingException e) {
                                 throw new RuntimeException(e);
                             }
@@ -80,40 +73,25 @@ public class MathParser {
             if (functionComponent.argsCount() != args.length && functionComponent.argsCount() == -1)
                 throw new MathParsingException("Args count mismatch " + functionComponent + " comp: " + comp);
 
-            switch (functionComponent) {
-                case FunctionComponent.FunctionComponent0 fc0 -> node.comp(fc0.function().get());
-                case FunctionComponent.FunctionComponent1 fc1 -> node.comp(fc1.function().apply(args[0]));
-                case FunctionComponent.FunctionComponent2 fc2 -> node.comp(fc2.function().apply(args[0], args[1]));
+            return switch (functionComponent) {
+                case FunctionComponent.FunctionComponent0 fc0 -> fc0.function().get();
+                case FunctionComponent.FunctionComponent1 fc1 -> fc1.function().apply(args[0]);
+                case FunctionComponent.FunctionComponent2 fc2 -> fc2.function().apply(args[0], args[1]);
                 case FunctionComponent.FunctionComponent3 fc3 ->
-                        node.comp(fc3.function().apply(args[0], args[1], args[2]));
-                case FunctionComponent.FunctionComponentMulti fcMulti -> node.comp(fcMulti.function().apply(args));
-            }
+                        fc3.function().apply(args[0], args[1], args[2]);
+                case FunctionComponent.FunctionComponentMulti fcMulti -> fcMulti.function().apply(args);
+            };
 
-            return node.comp();
         }
 
         throw new MathParsingException("Not parsed component " + comp);
     }
 
 
-    public MathComponent parse(String input) throws MathParsingException {
+    public MathComponent parseInput(String input) throws MathParsingException {
         if (input.isBlank()) return ValueFactory.zero();
 
-        var tree = new Tree(this);
-
-        var tokens = Tokenizer.tokenize(input);
-        for (int i = 0; i < tokens.size(); i++) {
-            var token = tokens.get(i);
-            ++i;
-            var token2 = tokens.size() > i ? tokens.get(i) : null;
-
-            try {
-                tree.add(token, token2 == null ? ' ' : token2.charAt(0));
-            } catch (MathParsingException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return tree.parse();
+        return ShuntingYardConverter.convertToMathComponent(Tokenizer.tokenize(input), this);
     }
 
     private static final Supplier<MathParser> DEFAULT_PARSER = StableValue.supplier(() -> new MathParser(

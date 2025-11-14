@@ -15,27 +15,27 @@ public class CalculatorTest {
         var parser = MathParser.defaultParser();
         assertEquals(
                 BigInteger.TWO,
-                parser.parse("1-(-1)").calculate().asBigInteger()
+                parser.parseInput("1-(-1)").calculate().asBigInteger()
         );
         assertEquals(
                 BigDecimal.valueOf(3),
-                parser.parse("1+2").calculate().asBigDecimal()
+                parser.parseInput("1+2").calculate().asBigDecimal()
         );
         assertEquals(
                 BigDecimal.valueOf(4),
-                parser.parse("2^2").calculate().asBigDecimal()
+                parser.parseInput("2^2").calculate().asBigDecimal()
         );
         assertEquals(
                 BigDecimal.valueOf(16),
-                parser.parse("2^2^2").calculate().asBigDecimal()
+                parser.parseInput("2^2^2").calculate().asBigDecimal()
         );
         assertEquals(
                 BigDecimal.valueOf(8),
-                parser.parse("2+2*2+2").calculate().asBigDecimal()
+                parser.parseInput("2+2*2+2").calculate().asBigDecimal()
         );
         assertEquals(
                 new BigDecimal(String.valueOf(Math.PI)),
-                parser.parse("pi").calculate().asBigDecimal()
+                parser.parseInput("pi").calculate().asBigDecimal()
         );
 
         assertEquals(
@@ -43,7 +43,7 @@ public class CalculatorTest {
                         ValueFactory.toValue(7),
                         ValueFactory.toValue(3)
                 ),
-                parser.parse("(1/3)+2").calculate()
+                parser.parseInput("(1/3)+2").calculate()
         );
 
         assertEquals(
@@ -51,7 +51,7 @@ public class CalculatorTest {
                         ValueFactory.toValue(2),
                         ValueFactory.toValue(3)
                 ).toString(),
-                parser.parse("(1/3)+(2/6)").calculate().toString()
+                parser.parseInput("(1/3)+(2/6)").calculate().toString()
         );
 
         assertEquals(
@@ -59,12 +59,12 @@ public class CalculatorTest {
                         ValueFactory.toValue(1),
                         ValueFactory.toValue(9)
                 ),
-                parser.parse("(1/3)*(1/3)").calculate()
+                parser.parseInput("(1/3)*(1/3)").calculate()
         );
 
         assertEquals(
                 ValueFactory.zero(),
-                parser.parse("(1/3)-(1/3)").calculate()
+                parser.parseInput("(1/3)-(1/3)").calculate()
         );
 
     }

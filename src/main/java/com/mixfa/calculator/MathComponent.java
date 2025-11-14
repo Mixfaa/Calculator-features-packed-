@@ -245,11 +245,19 @@ public sealed interface MathComponent {
         private final BiFunction<MathComponent, MathComponent, Value> operation;
         private final Supplier<Value> calculatedValue;
 
-        public AnyOperation(MathComponent compA, MathComponent compB, BiFunction<MathComponent, MathComponent, Value> operation) {
+        private final String info;
+
+        public AnyOperation(MathComponent compA, MathComponent compB, BiFunction<MathComponent, MathComponent, Value> operation, String info) {
             this.compA = compA;
             this.compB = compB;
             this.operation = operation;
+            this.info = info;
             this.calculatedValue = StableValue.supplier(() -> operation.apply(compA, compB));
+        }
+
+        @Override
+        public String toString() {
+            return compA.toString() + "  "+ info + "  " + compB.toString();
         }
 
         @Override
@@ -258,23 +266,23 @@ public sealed interface MathComponent {
         }
 
         public static AnyOperation add(MathComponent compA, MathComponent compB) {
-            return new AnyOperation(compA, compB, MathUtils::add);
+            return new AnyOperation(compA, compB, MathUtils::add, "+");
         }
 
         public static AnyOperation subtract(MathComponent compA, MathComponent compB) {
-            return new AnyOperation(compA, compB, MathUtils::subtract);
+            return new AnyOperation(compA, compB, MathUtils::subtract, "-");
         }
 
         public static AnyOperation multiply(MathComponent compA, MathComponent compB) {
-            return new AnyOperation(compA, compB, MathUtils::multiply);
+            return new AnyOperation(compA, compB, MathUtils::multiply, "*");
         }
 
         public static AnyOperation divide(MathComponent compA, MathComponent compB) {
-            return new AnyOperation(compA, compB, MathUtils::divide);
+            return new AnyOperation(compA, compB, MathUtils::divide, "/");
         }
 
         public static AnyOperation power(MathComponent compA, MathComponent compB) {
-            return new AnyOperation(compA, compB, MathUtils::power);
+            return new AnyOperation(compA, compB, MathUtils::power, "^");
         }
     }
 }
