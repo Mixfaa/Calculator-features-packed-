@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 class Tree {
     private TreeNode head;
+    private TreeNode tail;
     private final MathParser mathParser;
 
     public void add(String strComp, char operator) throws MathParsingException {
@@ -21,16 +22,17 @@ class Tree {
             component = mathParser.parse(strComp.substring(1, strComp.length() - 1));
 
         component = component == null ? new MathComponent.Unparsed(strComp) : component;
+
+        var newNode = new TreeNode(component, operator, null);
+
         if (head == null) {
-            head = new TreeNode(component, operator, null);
+            head = newNode;
+            tail = newNode;
             return;
         }
 
-        var currentNode = head;
-        while (currentNode.next != null)
-            currentNode = currentNode.next;
-
-        currentNode.next = new TreeNode(component, operator, null);
+        tail.next = newNode;
+        tail = newNode;
     }
 
     private void transform(TreeNodeTransformer transformer) throws MathParsingException {

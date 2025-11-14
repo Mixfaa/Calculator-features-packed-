@@ -6,7 +6,7 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-public class Parser2 {
+public class Tokenizer {
     private static final Pattern FUNC_PATTERN = Pattern.compile("([a-z]\\w*)");
     private static final String ALL_OPERATORS = "+-/*^()";
 
@@ -38,7 +38,7 @@ public class Parser2 {
     public static List<String> tokenize(String str) {
         var tokens = new ArrayList<String>();
         var tokenizer = new StringTokenizer(str, ALL_OPERATORS, true);
-        Stack<String> cachedTokens = new Stack<>();
+        var cachedTokens = new Stack<String>();
 
         var firstToken = true;
         while (hasMoreTokens(cachedTokens, tokenizer)) {

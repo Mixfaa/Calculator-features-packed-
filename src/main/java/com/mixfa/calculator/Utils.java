@@ -6,6 +6,36 @@ public class Utils {
     private Utils() {
     }
 
+    public static MathConstant findMathConstant(String comp, MathConstant[] constants) {
+        int l = 0;
+        int r = constants.length - 1;
+        while (l <= r) {
+            int m = l + (r - l) / 2;
+            if (constants[m].name().equals(comp))
+                return constants[m];
+            if (constants[m].name().compareTo(comp) < 0)
+                l = m + 1;
+            else
+                r = m - 1;
+        }
+        return null;
+    }
+
+//    public static FunctionComponent findMathFunction(String comp, FunctionComponent[] functionComponents) {
+//        int l = 0;
+//        int r = functionComponents.length - 1;
+//        while (l <= r) {
+//            int m = l + (r - l) / 2;
+//            if (startsWithFunctionName(comp, functionComponents[m]))
+//                return functionComponents[m];
+//            if (functionComponents[m].prefix().compareTo(comp) < 0)
+//                l = m + 1;
+//            else
+//                r = m - 1;
+//        }
+//        return null;
+//    }
+
     public static boolean startsWithFunctionName(String comp, FunctionComponent functionComponent) {
         var prefix = functionComponent.prefix();
         var prefixLength = prefix.length();

@@ -55,7 +55,6 @@ public class OptimizationUtils {
     public static MathComponent subtract(MathComponent a, MathComponent b) {
         var zeroPos = findZero(a, b);
 
-
         var bValue = b.calculate();
         if (zeroPos == -1)
             return bValue.negate();

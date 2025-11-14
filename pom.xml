@@ -37,16 +37,16 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.19.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-core</artifactId>
-            <version>1.37</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.37</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.openjdk.jmh</groupId>-->
+<!--            <artifactId>jmh-core</artifactId>-->
+<!--            <version>1.37</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.openjdk.jmh</groupId>-->
+<!--            <artifactId>jmh-generator-annprocess</artifactId>-->
+<!--            <version>1.37</version>-->
+<!--        </dependency>-->
 
     </dependencies>
     <build>
@@ -60,11 +60,11 @@
                     <target>25</target>
                     <compilerArgs>--enable-preview</compilerArgs>
                     <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.openjdk.jmh</groupId>
-                            <artifactId>jmh-generator-annprocess</artifactId>
-                            <version>1.37</version>
-                        </path>
+<!--                        <path>-->
+<!--                            <groupId>org.openjdk.jmh</groupId>-->
+<!--                            <artifactId>jmh-generator-annprocess</artifactId>-->
+<!--                            <version>1.37</version>-->
+<!--                        </path>-->
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>

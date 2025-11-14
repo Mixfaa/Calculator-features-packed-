@@ -1,18 +1,16 @@
 package com.mixfa.calculator;
 
 import com.mixfa.calculator.exception.MathParsingException;
-import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Gatherers;
 
 import static com.mixfa.calculator.Utils.getArgs;
 
-@RequiredArgsConstructor
 public class MathParser {
     private static final Supplier<Pattern> REAL_NUMBER_PATTERN = StableValue.supplier(() -> Pattern.compile("^[-+]?([0-9]*\\.)?[0-9]+([eE][-+]?[0-9]+)?$"));
     private static final Supplier<Pattern> INT_NUMBER_PATTERN = StableValue.supplier(() -> Pattern.compile("^-?\\d+$"));
@@ -21,6 +19,15 @@ public class MathParser {
     private final FunctionComponent[] functionComponents;
     private final MathConstant[] constants;
 
+    public MathParser(FunctionComponent[] functionComponents, MathConstant[] constants) {
+        this.functionComponents = Arrays.stream(functionComponents)
+                .sorted(Comparator.comparing(FunctionComponent::prefix))
+                .toArray(FunctionComponent[]::new);
+
+        this.constants = Arrays.stream(constants)
+                .sorted(Comparator.comparing(MathConstant::name))
+                .toArray(MathConstant[]::new);
+    }
 
     public MathComponent parseNode(Tree.TreeNode node) throws MathParsingException {
         if (!(node.comp() instanceof MathComponent.Unparsed(String comp)))
@@ -41,9 +48,8 @@ public class MathParser {
             return node.comp();
         }
 
-        for (MathConstant constant : constants) {
-            if (!comp.equals(constant.name()))
-                continue;
+        var constant = Utils.findMathConstant(comp, constants);
+        if (constant != null) {
             node.comp(constant.value());
             return node.comp();
         }
@@ -95,7 +101,7 @@ public class MathParser {
 
         var tree = new Tree(this);
 
-        var tokens = Parser2.tokenize(input);
+        var tokens = Tokenizer.tokenize(input);
         for (int i = 0; i < tokens.size(); i++) {
             var token = tokens.get(i);
             ++i;
