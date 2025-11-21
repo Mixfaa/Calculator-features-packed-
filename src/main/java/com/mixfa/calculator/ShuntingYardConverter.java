@@ -52,13 +52,10 @@ class ShuntingYardConverter {
                 while (!operatorStack.isEmpty() && isOperator(operatorStack.peek())) {
                     String topOp = operatorStack.peek();
 
-                    if (precedence(topOp) > precedence(token) ||
-                            (precedence(topOp) == precedence(token) && isLeftAssociative(topOp))) {
-
+                    if (precedence(topOp) > precedence(token) || (precedence(topOp) == precedence(token) && isLeftAssociative(topOp)))
                         outputQueue.add(operatorStack.pop());
-                    } else {
+                    else
                         break;
-                    }
                 }
                 operatorStack.push(token);
             } else if (token.equals("(")) {

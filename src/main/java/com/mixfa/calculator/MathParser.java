@@ -87,7 +87,6 @@ public class MathParser {
         throw new MathParsingException("Not parsed component " + comp);
     }
 
-
     public MathComponent parseInput(String input) throws MathParsingException {
         if (input.isBlank()) return ValueFactory.zero();
 
